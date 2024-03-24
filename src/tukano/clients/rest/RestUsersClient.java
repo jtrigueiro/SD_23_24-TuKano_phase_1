@@ -22,7 +22,6 @@ import tukano.api.User;
 import tukano.api.java.Users;
 import tukano.api.rest.RestUsers;
 
-
 public class RestUsersClient implements Users {
 	private static Logger Log = Logger.getLogger(RestUsersClient.class.getName());
 
@@ -32,116 +31,112 @@ public class RestUsersClient implements Users {
 	protected static final int MAX_RETRIES = 10;
 	protected static final int RETRY_SLEEP = 5000;
 
-	
 	final URI serverURI;
 	final Client client;
 	final ClientConfig config;
 
 	final WebTarget target;
-	
-	public RestUsersClient( URI serverURI ) {
+
+	public RestUsersClient(URI serverURI) {
 		this.serverURI = serverURI;
 
 		this.config = new ClientConfig();
-		
-		config.property( ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
-		config.property( ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
-		
+		config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
+		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
+
 		this.client = ClientBuilder.newClient(config);
 
-		target = client.target( serverURI ).path( RestUsers.PATH );
+		target = client.target(serverURI).path(RestUsers.PATH);
 	}
-		
+
 	@Override
 	public Result<String> createUser(User user) {
-		
-		for(int i = 0; i < MAX_RETRIES ; i++) {
+
+		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
 				Response r = target.request()
-						.accept( MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
 						.post(Entity.entity(user, MediaType.APPLICATION_JSON));
-				
-				
+
 				var status = r.getStatus();
-				if( status != Status.OK.getStatusCode() )
-					return Result.error( getErrorCodeFrom(status));
+				if (status != Status.OK.getStatusCode())
+					return Result.error(getErrorCodeFrom(status));
 				else
-					return Result.ok( r.readEntity( String.class ));
-				
-			} catch( ProcessingException x ) {
+					return Result.ok(r.readEntity(String.class));
+
+			} catch (ProcessingException x) {
 				Log.info(x.getMessage());
-				
-				utils.Sleep.ms( RETRY_SLEEP );
-			}
-			catch( Exception x ) {
+
+				utils.Sleep.ms(RETRY_SLEEP);
+			} catch (Exception x) {
 				x.printStackTrace();
 			}
 		}
-		return Result.error(  ErrorCode.TIMEOUT );
+		return Result.error(ErrorCode.TIMEOUT);
 	}
 
 	@Override
 	public Result<User> getUser(String userId, String pwd) {
-		for(int i = 0; i < MAX_RETRIES ; i++) {
+		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
-				Response r = target.path( userId )
-				.queryParam(RestUsers.PWD, pwd).request()
-				.accept(MediaType.APPLICATION_JSON)
-				.get();
+				Response r = target.path(userId)
+						.queryParam(RestUsers.PWD, pwd).request()
+						.accept(MediaType.APPLICATION_JSON)
+						.get();
 
 				var status = r.getStatus();
-				if( status != Status.OK.getStatusCode() )
-					return Result.error( getErrorCodeFrom(status));
-		else
-			return Result.ok( r.readEntity( User.class ));
-				
-			} catch( ProcessingException x ) {
-				Log.info(x.getMessage());
-				
-				utils.Sleep.ms( RETRY_SLEEP );
-			}
-			catch( Exception x ) {
-				x.printStackTrace();
-			}
-		}
-		return Result.error(  ErrorCode.TIMEOUT );
-	}
-	
-	@Override
-	public Result<Void> checkPassword(String userId, String pwd) {
-		for(int i = 0; i < MAX_RETRIES ; i++) {
-			try {
-				Response r = target.path( userId ).path("/check")
-				.queryParam(RestUsers.PWD, pwd).request()
-				.get();
-
-				var status = r.getStatus();
-				if( status != Status.NO_CONTENT.getStatusCode() )
-					return Result.error( getErrorCodeFrom(status));
+				if (status != Status.OK.getStatusCode())
+					return Result.error(getErrorCodeFrom(status));
 				else
-					return Result.ok();
-				
-			} catch( ProcessingException x ) {
+					return Result.ok(r.readEntity(User.class));
+
+			} catch (ProcessingException x) {
 				Log.info(x.getMessage());
-				
-				utils.Sleep.ms( RETRY_SLEEP );
-			}
-			catch( Exception x ) {
+
+				utils.Sleep.ms(RETRY_SLEEP);
+			} catch (Exception x) {
 				x.printStackTrace();
 			}
 		}
-		return Result.error(  ErrorCode.TIMEOUT );
+		return Result.error(ErrorCode.TIMEOUT);
 	}
+
+	/*
+	 * @Override
+	 * public Result<Void> checkPassword(String userId, String pwd) {
+	 * for (int i = 0; i < MAX_RETRIES; i++) {
+	 * try {
+	 * Response r = target.path(userId).path("/check")
+	 * .queryParam(RestUsers.PWD, pwd).request()
+	 * .get();
+	 * 
+	 * var status = r.getStatus();
+	 * if (status != Status.NO_CONTENT.getStatusCode())
+	 * return Result.error(getErrorCodeFrom(status));
+	 * else
+	 * return Result.ok();
+	 * 
+	 * } catch (ProcessingException x) {
+	 * Log.info(x.getMessage());
+	 * 
+	 * utils.Sleep.ms(RETRY_SLEEP);
+	 * } catch (Exception x) {
+	 * x.printStackTrace();
+	 * }
+	 * }
+	 * return Result.error(ErrorCode.TIMEOUT);
+	 * }
+	 */
 
 	@Override
 	public Result<User> updateUser(String userId, String password, User user) {
-		for(int i = 0; i < MAX_RETRIES ; i++) {
+		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
 				Response r = target.path(userId)
-				.queryParam(RestUsers.PWD, password)
-				.request()
-				.put(Entity.entity(user, MediaType.APPLICATION_JSON));
+						.queryParam(RestUsers.PWD, password)
+						.request()
+						.put(Entity.entity(user, MediaType.APPLICATION_JSON));
 
 				var status = r.getStatus();
 				if (status != Status.OK.getStatusCode()) {
@@ -149,27 +144,26 @@ public class RestUsersClient implements Users {
 				} else {
 					return Result.ok(r.readEntity(User.class));
 				}
-				
-			} catch( ProcessingException x ) {
+
+			} catch (ProcessingException x) {
 				Log.info(x.getMessage());
-				
-				utils.Sleep.ms( RETRY_SLEEP );
-			}
-			catch( Exception x ) {
+
+				utils.Sleep.ms(RETRY_SLEEP);
+			} catch (Exception x) {
 				x.printStackTrace();
 			}
 		}
-		return Result.error(  ErrorCode.TIMEOUT );
+		return Result.error(ErrorCode.TIMEOUT);
 	}
 
 	@Override
 	public Result<User> deleteUser(String userId, String password) {
-		for(int i = 0; i < MAX_RETRIES ; i++) {
+		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
 				Response r = target.path(userId)
-				.queryParam(RestUsers.PWD, password)
-				.request()
-				.delete();
+						.queryParam(RestUsers.PWD, password)
+						.request()
+						.delete();
 
 				var status = r.getStatus();
 				if (status != Status.OK.getStatusCode()) {
@@ -177,59 +171,58 @@ public class RestUsersClient implements Users {
 				} else {
 					return Result.ok(r.readEntity(User.class));
 				}
-				
-			} catch( ProcessingException x ) {
+
+			} catch (ProcessingException x) {
 				Log.info(x.getMessage());
-				
-				utils.Sleep.ms( RETRY_SLEEP );
-			}
-			catch( Exception x ) {
+
+				utils.Sleep.ms(RETRY_SLEEP);
+			} catch (Exception x) {
 				x.printStackTrace();
 			}
 		}
-		return Result.error(  ErrorCode.TIMEOUT );
+		return Result.error(ErrorCode.TIMEOUT);
 	}
 
-	
-
-	@Override
-	public Result<List<User>> searchUsers(String pattern) {
-		for(int i = 0; i < MAX_RETRIES ; i++) {
-			try {
-				Response r = target.queryParam("pattern", pattern)
-				.request(MediaType.APPLICATION_JSON)
-				.get();
-
-				var status = r.getStatus();
-				if (status != Status.OK.getStatusCode()) {
-					return Result.error(getErrorCodeFrom(status));
-				} else {
-					List<User> users = r.readEntity(new GenericType<List<User>>() {});
-					return Result.ok(users);
-				}
-				
-			} catch( ProcessingException x ) {
-				Log.info(x.getMessage());
-				
-				utils.Sleep.ms( RETRY_SLEEP );
-			}
-			catch( Exception x ) {
-				x.printStackTrace();
-			}
-		}
-		return Result.error(  ErrorCode.TIMEOUT );
-	}
+	/*
+	 * @Override
+	 * public Result<List<User>> searchUsers(String pattern) {
+	 * for (int i = 0; i < MAX_RETRIES; i++) {
+	 * try {
+	 * Response r = target.queryParam("pattern", pattern)
+	 * .request(MediaType.APPLICATION_JSON)
+	 * .get();
+	 * 
+	 * var status = r.getStatus();
+	 * if (status != Status.OK.getStatusCode()) {
+	 * return Result.error(getErrorCodeFrom(status));
+	 * } else {
+	 * List<User> users = r.readEntity(new GenericType<List<User>>() {
+	 * });
+	 * return Result.ok(users);
+	 * }
+	 * 
+	 * } catch (ProcessingException x) {
+	 * Log.info(x.getMessage());
+	 * 
+	 * utils.Sleep.ms(RETRY_SLEEP);
+	 * } catch (Exception x) {
+	 * x.printStackTrace();
+	 * }
+	 * }
+	 * return Result.error(ErrorCode.TIMEOUT);
+	 * }
+	 */
 
 	public static ErrorCode getErrorCodeFrom(int status) {
 		return switch (status) {
-		case 200, 209 -> ErrorCode.OK;
-		case 409 -> ErrorCode.CONFLICT;
-		case 403 -> ErrorCode.FORBIDDEN;
-		case 404 -> ErrorCode.NOT_FOUND;
-		case 400 -> ErrorCode.BAD_REQUEST;
-		case 500 -> ErrorCode.INTERNAL_ERROR;
-		case 501 -> ErrorCode.NOT_IMPLEMENTED;
-		default -> ErrorCode.INTERNAL_ERROR;
+			case 200, 209 -> ErrorCode.OK;
+			case 409 -> ErrorCode.CONFLICT;
+			case 403 -> ErrorCode.FORBIDDEN;
+			case 404 -> ErrorCode.NOT_FOUND;
+			case 400 -> ErrorCode.BAD_REQUEST;
+			case 500 -> ErrorCode.INTERNAL_ERROR;
+			case 501 -> ErrorCode.NOT_IMPLEMENTED;
+			default -> ErrorCode.INTERNAL_ERROR;
 		};
 	}
 }

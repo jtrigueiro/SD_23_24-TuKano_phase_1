@@ -71,7 +71,7 @@ public interface Users {
 	 *         (including 0 hits).
 	 *         BAD_REQUEST - otherwise.
 	 */
-	Result<List<User>> searchUsers(String pattern);
+	// Result<List<User>> searchUsers(String pattern);
 
 	/**
 	 * Checks if the password of a user is correct.
@@ -82,5 +82,6 @@ public interface Users {
 	 * @return OK when the userId exists and provided password matches
 	 *         FORBIDDEN - otherwise.
 	 */
-	Result<Void> checkPassword(String userId, String pwd);
+	// Result<Void> checkPassword(String userId, String pwd);
+
 }

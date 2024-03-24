@@ -13,6 +13,7 @@ import tukano.api.User;
 import tukano.api.java.Users;
 
 public class UsersServer implements Users {
+	// TODO: Para apagar
 	private final Map<String, User> users = new HashMap<>();
 
 	private static Logger Log = Logger.getLogger(UsersServer.class.getName());
@@ -132,43 +133,44 @@ public class UsersServer implements Users {
 	}
 
 	// -------------------------NAO USADO??-------------------------------
-
-	@Override
-	public Result<List<User>> searchUsers(String pattern) {
-		List<User> matchingUsers = new ArrayList<>();
-
-		for (User user : users.values()) {
-			if (user.displayName().contains(pattern)) {
-				matchingUsers.add(user);
-			}
-		}
-
-		return Result.ok(matchingUsers);
-	}
-
-	@Override
-	public Result<Void> checkPassword(String userId, String pwd) {
-		Log.info("checkPassword : user = " + userId + "; pwd = " + pwd);
-
-		// Check if user is valid
-		if (userId == null || pwd == null) {
-			Log.info("Invalid user data.");
-			return Result.error(ErrorCode.BAD_REQUEST);
-		}
-
-		// Check if user exists
-		if (!users.containsKey(userId)) {
-			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
-		}
-
-		// Check if the password is correct
-		User existingUser = users.get(userId);
-		if (!existingUser.pwd().equals(pwd)) {
-			Log.info("Password is incorrect.");
-			return Result.error(ErrorCode.FORBIDDEN);
-		}
-
-		return Result.ok();
-	}
+	/*
+	 * @Override
+	 * public Result<List<User>> searchUsers(String pattern) {
+	 * List<User> matchingUsers = new ArrayList<>();
+	 * 
+	 * for (User user : users.values()) {
+	 * if (user.displayName().contains(pattern)) {
+	 * matchingUsers.add(user);
+	 * }
+	 * }
+	 * 
+	 * return Result.ok(matchingUsers);
+	 * }
+	 * 
+	 * @Override
+	 * public Result<Void> checkPassword(String userId, String pwd) {
+	 * Log.info("checkPassword : user = " + userId + "; pwd = " + pwd);
+	 * 
+	 * // Check if user is valid
+	 * if (userId == null || pwd == null) {
+	 * Log.info("Invalid user data.");
+	 * return Result.error(ErrorCode.BAD_REQUEST);
+	 * }
+	 * 
+	 * // Check if user exists
+	 * if (!users.containsKey(userId)) {
+	 * Log.info("User does not exist.");
+	 * return Result.error(ErrorCode.NOT_FOUND);
+	 * }
+	 * 
+	 * // Check if the password is correct
+	 * User existingUser = users.get(userId);
+	 * if (!existingUser.pwd().equals(pwd)) {
+	 * Log.info("Password is incorrect.");
+	 * return Result.error(ErrorCode.FORBIDDEN);
+	 * }
+	 * 
+	 * return Result.ok();
+	 * }
+	 */
 }
