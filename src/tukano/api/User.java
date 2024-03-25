@@ -1,67 +1,82 @@
 package tukano.api;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 public class User {
-	
+
 	private String pwd;
 	private String email;
 	@Id
 	private String userId;
 	private String displayName;
+	private Set<String> following;
+	private Set<String> followers;
 
-	public User() {}
-	
+	public User() {
+	}
+
 	public User(String userId, String pwd, String email, String displayName) {
 		this.pwd = pwd;
 		this.email = email;
 		this.userId = userId;
 		this.displayName = displayName;
+		this.following = new HashSet<>();
+		this.followers = new HashSet<>();
 	}
 
 	public String getUserId() {
 		return userId;
 	}
+
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+
 	public String getPwd() {
 		return pwd;
 	}
+
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getDisplayName() {
 		return displayName;
 	}
+
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
-	
+
 	public String userId() {
 		return userId;
 	}
-	
+
 	public String pwd() {
 		return pwd;
 	}
-	
+
 	public String email() {
 		return email;
 	}
-	
+
 	public String displayName() {
 		return displayName;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", pwd=" + pwd + ", email=" + email + ", displayName=" + displayName + "]";

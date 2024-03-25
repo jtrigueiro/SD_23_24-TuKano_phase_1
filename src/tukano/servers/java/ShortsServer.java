@@ -140,8 +140,18 @@ public class ShortsServer implements Shorts {
 
     @Override
     public Result<List<String>> getShorts(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getShorts'");
+
+        Result<User> check = checkUserIdAndPassword(userId, "invalidPassword");
+        // FIX ME: código esparguete?
+        if (check.error() == ErrorCode.NOT_FOUND) {
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+        String query = String.format("SELECT s.shortId FROM Short s WHERE s.ownerId = '%s'", userId); // Isto está
+                                                                                                      // certo?
+        var result = Hibernate.getInstance().jpql(query, String.class);
+
+        return Result.ok(result);
     }
 
     @Override
