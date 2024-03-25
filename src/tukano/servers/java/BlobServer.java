@@ -1,5 +1,6 @@
 package tukano.servers.java;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,10 +9,19 @@ import java.util.logging.Logger;
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
+import tukano.api.Discovery;
 
 public class BlobServer implements Blobs {
     private final Map<String, byte[]> blobs = new HashMap<>();
     private static Logger Log = Logger.getLogger(BlobServer.class.getName());
+    final URI serverURI;
+
+    public BlobServer(URI serverURI) {
+        this.serverURI = serverURI;
+
+        Discovery discovery = Discovery.getInstance();
+        discovery.announce("BlobServer", serverURI.toString());
+    }
 
     @Override
     public Result<Void> upload(String blobId, byte[] bytes) {

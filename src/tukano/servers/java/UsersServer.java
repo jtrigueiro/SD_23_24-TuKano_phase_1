@@ -1,5 +1,6 @@
 package tukano.servers.java;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,12 +12,27 @@ import tukano.api.java.Result.ErrorCode;
 import tukano.persistence.Hibernate;
 import tukano.api.User;
 import tukano.api.java.Users;
+import tukano.api.Discovery;
 
 public class UsersServer implements Users {
 	// TODO: Para apagar
 	private final Map<String, User> users = new HashMap<>();
+	
 
 	private static Logger Log = Logger.getLogger(UsersServer.class.getName());
+	private static Discovery discovery;
+	final URI serverURI;
+
+	private URI shortsServer;
+	
+	public UsersServer(URI serverURI) {
+		this.serverURI = serverURI;
+
+		discovery = Discovery.getInstance();
+		discovery.announce("UsersServer", "http://localhost:8080/users");
+
+		shortsServer = discovery.knownUrisOf("ShortsServer", 1)[0];
+	}
 
 	@Override
 	public Result<String> createUser(User user) {

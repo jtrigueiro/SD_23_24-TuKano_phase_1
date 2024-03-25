@@ -11,6 +11,7 @@ import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
 import tukano.api.java.Shorts;
 import tukano.api.rest.RestUsers;
+import tukano.api.Discovery;
 
 import java.util.logging.Logger;
 
@@ -40,6 +41,9 @@ public class ShortsServer implements Shorts {
     final ClientConfig config;
 
     private static Logger Log = Logger.getLogger(ShortsServer.class.getName());
+    private static Discovery discovery;
+    private URI usersServer;
+    private URI[] blobServers;
 
     public ShortsServer(URI serverURI) {
         this.serverURI = serverURI;
@@ -52,6 +56,12 @@ public class ShortsServer implements Shorts {
         this.client = ClientBuilder.newClient(config);
 
         target = client.target(serverURI).path(RestUsers.PATH);
+
+        discovery = Discovery.getInstance();
+        discovery.announce("ShortsServer", serverURI.toString());
+
+        usersServer = discovery.knownUrisOf("UsersServer", 1)[0];
+        blobServers = discovery.knownUrisOf("BlobServer", 3);
     }
 
     @Override

@@ -21,6 +21,7 @@ import tukano.api.java.Result.ErrorCode;
 import tukano.api.User;
 import tukano.api.java.Users;
 import tukano.api.rest.RestUsers;
+import tukano.api.Discovery;
 
 public class RestUsersClient implements Users {
 	private static Logger Log = Logger.getLogger(RestUsersClient.class.getName());
@@ -31,14 +32,17 @@ public class RestUsersClient implements Users {
 	protected static final int MAX_RETRIES = 10;
 	protected static final int RETRY_SLEEP = 5000;
 
-	final URI serverURI;
 	final Client client;
 	final ClientConfig config;
 
 	final WebTarget target;
+	final URI usersServer;
+	final URI shortsServer;
+	final URI[] blobServers;
+
+	private static Discovery discovery;
 
 	public RestUsersClient(URI serverURI) {
-		this.serverURI = serverURI;
 
 		this.config = new ClientConfig();
 
@@ -46,6 +50,13 @@ public class RestUsersClient implements Users {
 		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
 		this.client = ClientBuilder.newClient(config);
+
+		discovery = Discovery.getInstance();
+		usersServer = discovery.knownUrisOf("UsersServer", 1)[0];
+		shortsServer = discovery.knownUrisOf("ShortsServer", 1)[0];
+		blobServers = discovery.knownUrisOf("BlobServer", 3);
+
+		
 
 		target = client.target(serverURI).path(RestUsers.PATH);
 	}
