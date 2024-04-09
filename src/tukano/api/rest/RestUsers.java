@@ -12,7 +12,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+
 import tukano.api.User;
+
 
 @Path(RestUsers.PATH)
 public interface RestUsers {
@@ -44,16 +46,12 @@ public interface RestUsers {
 	@Produces(MediaType.APPLICATION_JSON)
 	User deleteUser(@PathParam(USER_ID) String userId, @QueryParam(PWD) String pwd);
 
-	/*
-	 * @GET
-	 * 
-	 * @Produces(MediaType.APPLICATION_JSON)
-	 * List<User> searchUsers(@QueryParam(QUERY) String pattern);
-	 * 
-	 * @GET
-	 * 
-	 * @Path("/{" + USER_ID+ "}/check")
-	 * void verifyPassword(@PathParam(USER_ID) String userId, @QueryParam(PWD)
-	 * String pwd);
-	 */
+	 @GET
+	 @Produces(MediaType.APPLICATION_JSON)
+	 List<User> searchUsers(@QueryParam(QUERY) String pattern);
+	 
+	 @GET
+	 @Path("/{" + USER_ID+ "}/check")
+	 void verifyPassword(@PathParam(USER_ID) String userId, @QueryParam(PWD)
+	 String pwd);
 }

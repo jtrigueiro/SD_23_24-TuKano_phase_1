@@ -72,15 +72,4 @@ public interface Users {
 	 */
 	Result<List<User>> searchUsers(String pattern);
 
-	/**
-	 * Checks if the password of a user is correct.
-	 * 
-	 * @param userId - the userId of the user
-	 * @param pwd    - password of the user
-	 * 
-	 * @return OK when the userId exists and provided password matches
-	 *         FORBIDDEN - otherwise.
-	 */
-	Result<Void> checkPassword(String userId, String pwd);
-
 }
