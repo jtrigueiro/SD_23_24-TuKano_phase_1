@@ -108,7 +108,7 @@ public class ShortsServer implements Shorts {
             return Result.error(ErrorCode.FORBIDDEN);
         }
         // TODO: criar o URL do blob
-        Short s = new Short(UUID.randomUUID().toString(), userId, "blobUrl", Instant.now().toEpochMilli());
+        Short s = new Short(UUID.randomUUID().toString(), userId, "blobUrl", Instant.now().toEpochMilli(), 0);
         Hibernate.getInstance().persist(s);
 
         return Result.ok(s);
