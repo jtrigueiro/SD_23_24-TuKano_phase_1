@@ -42,7 +42,7 @@ public class RestUsersClient implements Users {
 
 	private static Discovery discovery;
 
-	public RestUsersClient(URI serverURI) {
+	public RestUsersClient() {
 
 		this.config = new ClientConfig();
 

@@ -25,28 +25,50 @@ public class Short {
 	public Short() {
 	}
 
-	public Short(String shortId, String ownerId, String blobUrl, long timestamp) {
+	public Short(String shortId, String ownerId, String blobUrl, long timestamp, int totalLikes) {
+		super();
 		this.shortId = shortId;
 		this.ownerId = ownerId;
 		this.blobUrl = blobUrl;
 		this.timestamp = timestamp;
-		this.totalLikes = 0;
+		this.totalLikes = totalLikes;
 	}
+
+	public Short(String shortId, String ownerId, String blobUrl) {
+		this( shortId, ownerId, blobUrl, System.currentTimeMillis(), 0);
+	}
+
 
 	public String getShortId() {
 		return shortId;
+	}
+
+	public void setShortId(String shortId) {
+		this.shortId = shortId;
 	}
 
 	public String getOwnerId() {
 		return ownerId;
 	}
 
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+
 	public String getBlobUrl() {
 		return blobUrl;
 	}
 
+	public void setBlobUrl(String blobUrl) {
+		this.blobUrl = blobUrl;
+	}
+
 	public long getTimestamp() {
 		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public int getTotalLikes() {
@@ -61,4 +83,13 @@ public class Short {
 		totalLikes--;
 	}
 
+	@Override
+	public String toString() {
+		return "Short [shortId=" + shortId + ", ownerId=" + ownerId + ", blobUrl=" + blobUrl + ", timestamp="
+				+ timestamp + ", totalLikes=" + totalLikes + "]";
+	}
+
+	public Short copyWith( long totLikes ) {
+		return new Short( shortId, ownerId, blobUrl, timestamp, (int)totLikes);
+	}
 }

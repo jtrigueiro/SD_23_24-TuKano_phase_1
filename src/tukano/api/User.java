@@ -9,11 +9,12 @@ import jakarta.persistence.Id;
 @Entity
 public class User {
 
-	private String pwd;
-	private String email;
+	
 	@Id
 	private String userId;
 	private String displayName;
+	private String pwd;
+	private String email;
 	private Set<String> following;
 	private Set<String> followers;
 
@@ -81,4 +82,5 @@ public class User {
 	public String toString() {
 		return "User [userId=" + userId + ", pwd=" + pwd + ", email=" + email + ", displayName=" + displayName + "]";
 	}
+
 }

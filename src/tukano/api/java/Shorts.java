@@ -47,15 +47,14 @@ public interface Shorts {
 	/**
 	 * Retrieves a given Short.
 	 * 
-	 * @param shortId the unique identifier of the short to be deleted
+	 * @param shortId the unique identifier of the short to be retrieved
 	 * @return (OK,Short),
 	 *         NOT_FOUND if shortId does not match an existing short
 	 */
 	Result<Short> getShort(String shortId);
 
 	/**
-	 * Retrieves the list of identifiers of the shorts created by the given user,
-	 * with its total likes count updated.
+	  * Retrieves the list of identifiers of the shorts created by the given user.
 	 * 
 	 * @param userId the user that owns the requested shorts
 	 * @return (OK, List<String>|empty list) or NOT_FOUND if the user does not exist
@@ -109,7 +108,7 @@ public interface Shorts {
 	 * 
 	 * @param shortId  the identifier of the short
 	 * @param password the password of the owner of the short
-	 * @return (OK,Boolean),
+	 * @return (OK,List<String>|empty list), 
 	 *         NOT_FOUND if there is no Short with the given shortId
 	 *         FORBIDDEN if the password is incorrect
 	 */
@@ -122,7 +121,7 @@ public interface Shorts {
 	 * 
 	 * @param userId   user of the requested feed
 	 * @param password the password of the user
-	 * @return (OK,List<PostId>|empty list)
+	 *  @return (OK,List<String>|empty list)
 	 *         NOT_FOUND if the user does not exists
 	 *         FORBIDDEN if the password is incorrect
 	 */
