@@ -56,7 +56,7 @@ public class RestUsersClient implements Users {
 		shortsServer = discovery.knownUrisOf("ShortsServer", 1)[0];
 		blobServers = discovery.knownUrisOf("BlobServer", 3);
 
-		
+
 
 		target = client.target(serverURI).path(RestUsers.PATH);
 	}
@@ -121,16 +121,16 @@ public class RestUsersClient implements Users {
 	 * Response r = target.path(userId).path("/check")
 	 * .queryParam(RestUsers.PWD, pwd).request()
 	 * .get();
-	 * 
+	 *
 	 * var status = r.getStatus();
 	 * if (status != Status.NO_CONTENT.getStatusCode())
 	 * return Result.error(getErrorCodeFrom(status));
 	 * else
 	 * return Result.ok();
-	 * 
+	 *
 	 * } catch (ProcessingException x) {
 	 * Log.info(x.getMessage());
-	 * 
+	 *
 	 * utils.Sleep.ms(RETRY_SLEEP);
 	 * } catch (Exception x) {
 	 * x.printStackTrace();
@@ -202,7 +202,7 @@ public class RestUsersClient implements Users {
 	 * Response r = target.queryParam("pattern", pattern)
 	 * .request(MediaType.APPLICATION_JSON)
 	 * .get();
-	 * 
+	 *
 	 * var status = r.getStatus();
 	 * if (status != Status.OK.getStatusCode()) {
 	 * return Result.error(getErrorCodeFrom(status));
@@ -211,10 +211,10 @@ public class RestUsersClient implements Users {
 	 * });
 	 * return Result.ok(users);
 	 * }
-	 * 
+	 *
 	 * } catch (ProcessingException x) {
 	 * Log.info(x.getMessage());
-	 * 
+	 *
 	 * utils.Sleep.ms(RETRY_SLEEP);
 	 * } catch (Exception x) {
 	 * x.printStackTrace();
