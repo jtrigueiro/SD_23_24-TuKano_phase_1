@@ -1,6 +1,8 @@
 package tukano.clients.rest;
 
 import java.util.function.Supplier;
+
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ProcessingException;
 import tukano.api.java.Result;
@@ -25,6 +27,21 @@ public class RestClient {
     }
 
     protected <T> Result<T> toJavaResult(Response r, Class<T> entityType) {
+    	try {
+    		var status = r.getStatusInfo().toEnum();
+    		if (status == Response.Status.OK && r.hasEntity())
+    			return Result.ok(r.readEntity(entityType));
+    		else 
+    			if( status == Response.Status.NO_CONTENT)
+                    return Result.ok();
+    		
+    		return Result.error(getErrorCodeFrom(status.getStatusCode()));
+    	} finally {
+    		r.close();
+    	}
+    }
+
+    protected <T> Result<T> toJavaResult(Response r, GenericType<T> entityType) {
     	try {
     		var status = r.getStatusInfo().toEnum();
     		if (status == Response.Status.OK && r.hasEntity())

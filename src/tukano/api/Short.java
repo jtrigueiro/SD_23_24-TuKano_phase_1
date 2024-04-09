@@ -31,7 +31,7 @@ public class Short {
 		this.ownerId = ownerId;
 		this.blobUrl = blobUrl;
 		this.timestamp = timestamp;
-		this.totalLikes = totalLikes;
+		this.totalLikes = 0;
 	}
 
 	public Short(String shortId, String ownerId, String blobUrl) {

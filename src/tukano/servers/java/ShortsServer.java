@@ -100,6 +100,11 @@ public class ShortsServer implements Shorts {
         // TODO: evitar fazer estes ifs quando já se sabe o erro e o problema é o tipo
         // do objeto
         Result<User> result = checkUserIdAndPassword(userId, password);
+
+        if(!result.isOK()) {
+            return Result.error(result.error());
+        }
+        
         if (result.error() == ErrorCode.BAD_REQUEST) {
             return Result.error(ErrorCode.BAD_REQUEST);
         } else if (result.error() == ErrorCode.NOT_FOUND) {
@@ -108,7 +113,7 @@ public class ShortsServer implements Shorts {
             return Result.error(ErrorCode.FORBIDDEN);
         }
         // TODO: criar o URL do blob
-        Short s = new Short(UUID.randomUUID().toString(), userId, "blobUrl", Instant.now().toEpochMilli());
+        Short s = new Short(UUID.randomUUID().toString(), userId, "blobUrl", Instant.now().toEpochMilli(), 0);
         Hibernate.getInstance().persist(s);
 
         return Result.ok(s);
