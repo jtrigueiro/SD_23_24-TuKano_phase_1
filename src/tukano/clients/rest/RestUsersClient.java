@@ -26,11 +26,13 @@ public class RestUsersClient extends RestClient implements Users {
 	final Client client;
 	final ClientConfig config;
 
+	final URI serverURI;
 	final WebTarget usTarget, ssTarget;
 	final URI[] usersServer, shortsServer, blobServers;
 	private static Discovery discovery;
 
-	public RestUsersClient() {
+	public RestUsersClient(URI serverURI) {
+		this.serverURI = serverURI;
 		this.config = new ClientConfig();
 
 		config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
@@ -39,9 +41,9 @@ public class RestUsersClient extends RestClient implements Users {
 		this.client = ClientBuilder.newClient(config);
 
 		discovery = Discovery.getInstance();
-		usersServer = discovery.knownUrisOf("UsersServer", 1);
-		shortsServer = discovery.knownUrisOf("ShortsServer", 1);
-		blobServers = discovery.knownUrisOf("BlobServer", 3);
+		usersServer = discovery.knownUrisOf("UsersService", 1);
+		shortsServer = discovery.knownUrisOf("ShortsService", 1);
+		blobServers = discovery.knownUrisOf("BlobsService", 3);
 
 		usTarget = client.target(usersServer[0]).path(RestUsers.PATH);
 		ssTarget = client.target(shortsServer[0]).path(RestUsers.PATH);

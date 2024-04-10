@@ -2,6 +2,10 @@ package tukano.api;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import java.util.Set;
+import java.util.UUID;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Represents a Short video uploaded by an user.
@@ -16,28 +20,51 @@ import jakarta.persistence.Id;
 @Entity
 public class Short {
 	@Id
-	String shortId;
-	String ownerId;
-	String blobUrl;
-	long timestamp;
-	int totalLikes;
+	private String shortId;
+	private String ownerId;
+	private String blobUrl;
+	private long timestamp;
+	private Set<String> likes = new HashSet<>();
 
 	public Short() {
 	}
 
-	public Short(String shortId, String ownerId, String blobUrl, long timestamp, int totalLikes) {
-		super();
+	public Short(String ownerId, String blobUrl) {
+		this.shortId = UUID.randomUUID().toString();
+		this.ownerId = ownerId;
+		this.blobUrl = blobUrl;
+		this.timestamp = System.currentTimeMillis();
+		this.likes = new HashSet<>();
+	}
+
+	public Short(String shortId, String ownerId, String blobUrl, long timestamp, Set<String> likes) {
 		this.shortId = shortId;
 		this.ownerId = ownerId;
 		this.blobUrl = blobUrl;
 		this.timestamp = timestamp;
-		this.totalLikes = 0;
+		this.likes = likes;
 	}
 
-	public Short(String shortId, String ownerId, String blobUrl) {
-		this( shortId, ownerId, blobUrl, System.currentTimeMillis(), 0);
+	public void addLike(String userId) {
+		if(!likes.contains(userId))
+			likes.add(userId);
 	}
 
+	public void removeLike(String userId) {
+		likes.remove(userId);
+	}
+
+	@Override
+	public String toString() {
+		return "Short [shortId=" + shortId + ", ownerId=" + ownerId + ", blobUrl=" + blobUrl + ", timestamp="
+				+ timestamp + ", totalLikes=" + likes.size() + "]";
+	}
+
+	public Short copyOf() {
+		return new Short(shortId, ownerId, blobUrl, timestamp, likes);
+	}
+
+	// GETTERS AND SETTERS
 
 	public String getShortId() {
 		return shortId;
@@ -72,24 +99,11 @@ public class Short {
 	}
 
 	public int getTotalLikes() {
-		return totalLikes;
+		return likes.size();
 	}
 
-	public void addLike() {
-		totalLikes++;
+	public List<String> getLikes() {
+		return List.copyOf(likes);
 	}
 
-	public void removeLike() {
-		totalLikes--;
-	}
-
-	@Override
-	public String toString() {
-		return "Short [shortId=" + shortId + ", ownerId=" + ownerId + ", blobUrl=" + blobUrl + ", timestamp="
-				+ timestamp + ", totalLikes=" + totalLikes + "]";
-	}
-
-	public Short copyWith( long totLikes ) {
-		return new Short( shortId, ownerId, blobUrl, timestamp, (int)totLikes);
-	}
 }

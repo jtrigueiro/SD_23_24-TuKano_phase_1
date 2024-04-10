@@ -30,7 +30,7 @@ private static Logger Log = Logger.getLogger(UpdateUser.class.getName());
 		var new_user = new User( new_userId, new_password, new_email, new_displayName);		
 		
 		var result = client.updateUser(userId, password, new_user);
-		if( result.isOK()  )
+		if( result.isOK() )
 			Log.info("Updated user:" + result.value() );
 		else
 			Log.info("User update failed with error: " + result.error());

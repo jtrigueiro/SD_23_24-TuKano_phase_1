@@ -11,7 +11,7 @@ import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
 import tukano.api.Discovery;
 
-public class BlobServer implements Blobs {
+public class BlobServer extends RestServer implements Blobs {
     private final Map<String, byte[]> blobs = new HashMap<>();
     private static Logger Log = Logger.getLogger(BlobServer.class.getName());
     final URI serverURI;
@@ -20,7 +20,7 @@ public class BlobServer implements Blobs {
         this.serverURI = serverURI;
 
         Discovery discovery = Discovery.getInstance();
-        discovery.announce("BlobServer", serverURI.toString());
+        discovery.announce("BlobsService", serverURI.toString());
     }
 
     @Override

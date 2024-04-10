@@ -1,9 +1,8 @@
 package tukano.servers.java;
 
 import java.net.URI;
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import tukano.api.Short;
 import tukano.api.User;
@@ -13,41 +12,36 @@ import tukano.api.java.Shorts;
 import tukano.api.rest.RestUsers;
 import tukano.api.Discovery;
 
-import java.util.logging.Logger;
-
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 
-import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import tukano.persistence.Hibernate;
 
-public class ShortsServer implements Shorts {
+public class ShortsServer extends RestServer implements Shorts {
 
     protected static final int READ_TIMEOUT = 5000;
     protected static final int CONNECT_TIMEOUT = 5000;
-    protected static final int MAX_RETRIES = 10;
-    protected static final int RETRY_SLEEP = 5000;
 
-    final WebTarget target;
-    final URI serverURI;
     final Client client;
-    final ClientConfig config;
+    final ClientConfig config;   
 
-    private static Logger Log = Logger.getLogger(ShortsServer.class.getName());
-    private static Discovery discovery;
-    private URI usersServer;
+    private URI[] usersServer;
     private URI[] blobServers;
 
-    public ShortsServer(URI serverURI) {
-        this.serverURI = serverURI;
+    private WebTarget usTarget;
+    private WebTarget[] bTargets;
 
+    private static String queryShortId = "SELECT s FROM Short s WHERE s.shortId = '%s'";
+    private static String queryOwnerId = "SELECT s FROM Short s WHERE s.ownerId = '%s'";
+    private static Discovery discovery;
+
+
+    public ShortsServer(URI serverURI) {
         this.config = new ClientConfig();
 
         config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
@@ -55,87 +49,41 @@ public class ShortsServer implements Shorts {
 
         this.client = ClientBuilder.newClient(config);
 
-        target = client.target(serverURI).path(RestUsers.PATH);
-
         discovery = Discovery.getInstance();
-        discovery.announce("ShortsServer", serverURI.toString());
+        discovery.announce("ShortsService", serverURI.toString());
 
-        usersServer = discovery.knownUrisOf("UsersServer", 1)[0];
-        blobServers = discovery.knownUrisOf("BlobServer", 3);
-    }
+        usersServer = discovery.knownUrisOf("UsersService", 1);
+        blobServers = discovery.knownUrisOf("BlobsService", 3);
 
-    @Override
-    public Result<User> checkUserIdAndPassword(String userId, String pwd) {
-        for (int i = 0; i < MAX_RETRIES; i++) {
-            try {
-                Response r = target.path(userId)
-                        .queryParam(RestUsers.PWD, pwd).request()
-                        .accept(MediaType.APPLICATION_JSON)
-                        .get();
-
-                var status = r.getStatus();
-                if (status != Status.OK.getStatusCode())
-                    return Result.error(getErrorCodeFrom(status));
-                else
-                    return Result.ok(r.readEntity(User.class));
-
-            } catch (ProcessingException x) {
-                Log.info(x.getMessage());
-
-                utils.Sleep.ms(RETRY_SLEEP);
-            } catch (Exception x) {
-                x.printStackTrace();
-            }
-        }
-        return Result.error(ErrorCode.TIMEOUT);
+        usTarget = client.target(usersServer[0]).path(RestUsers.PATH);
+        for(int i = 0 ; i < blobServers.length; i++)
+            bTargets[i] = client.target(blobServers[i]).path(RestUsers.PATH);
     }
 
     @Override
     public Result<Short> createShort(String userId, String password) {
-        // Check if user is valid
-        if (userId == null || password == null) {
-            Log.info("Invalid user data.");
-            return Result.error(ErrorCode.BAD_REQUEST);
-        }
-        // TODO: evitar fazer estes ifs quando já se sabe o erro e o problema é o tipo
-        // do objeto
         Result<User> result = checkUserIdAndPassword(userId, password);
 
-        if(!result.isOK()) {
+        if(!result.isOK())
             return Result.error(result.error());
-        }
         
-        if (result.error() == ErrorCode.BAD_REQUEST) {
-            return Result.error(ErrorCode.BAD_REQUEST);
-        } else if (result.error() == ErrorCode.NOT_FOUND) {
-            return Result.error(ErrorCode.NOT_FOUND);
-        } else if (result.error() == ErrorCode.FORBIDDEN) {
-            return Result.error(ErrorCode.FORBIDDEN);
-        }
-        // TODO: criar o URL do blob
-        Short s = new Short(UUID.randomUUID().toString(), userId, "blobUrl", Instant.now().toEpochMilli(), 0);
+        Short s = new Short(userId, "blobUrl");
         Hibernate.getInstance().persist(s);
-
         return Result.ok(s);
     }
 
     @Override
     public Result<Void> deleteShort(String shortId, String password) {
-        String query = String.format("SELECT s FROM Short s WHERE s.shortId = '%s'", shortId);
-        var result = Hibernate.getInstance().jpql(query, Short.class);
+        var result = hibernateQuery(String.format(queryShortId, shortId), Short.class);
 
-        if (result.isEmpty()) {
-            return Result.error(ErrorCode.NOT_FOUND);
-        }
+        if (result.error() != ErrorCode.OK)
+            return Result.error(result.error());
 
-        Short s = result.get(0);
+        Short s = result.value().get(0);
         Result<User> check = checkUserIdAndPassword(s.getOwnerId(), password);
 
-        if (check.error() == ErrorCode.BAD_REQUEST) {
-            return Result.error(ErrorCode.BAD_REQUEST);
-        } else if (check.error() == ErrorCode.FORBIDDEN) {
-            return Result.error(ErrorCode.FORBIDDEN);
-        }
+        if(check.error() != ErrorCode.OK )
+            return Result.error(check.error());
 
         Hibernate.getInstance().delete(s);
         return Result.ok();
@@ -143,72 +91,165 @@ public class ShortsServer implements Shorts {
 
     @Override
     public Result<Short> getShort(String shortId) {
-        String query = String.format("SELECT s FROM Short s WHERE s.shortId = '%s'", shortId);
-        var result = Hibernate.getInstance().jpql(query, Short.class);
 
-        if (result.isEmpty()) {
-            return Result.error(ErrorCode.NOT_FOUND);
-        }
-
-        return Result.ok(result.get(0));
+        var result = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+        return result.error() == ErrorCode.OK ? Result.ok(result.value().get(0)) : Result.error(result.error());
     }
 
     @Override
     public Result<List<String>> getShorts(String userId) {
+        Result<User> check = hasUser(userId);
 
-        Result<User> check = checkUserIdAndPassword(userId, "invalidPassword");
-        // FIX ME: código esparguete?
-        if (check.error() == ErrorCode.NOT_FOUND) {
-            return Result.error(ErrorCode.NOT_FOUND);
-        }
+        if(hasUser(userId).error() != ErrorCode.OK)
+            return Result.error(check.error());
 
-        String query = String.format("SELECT s.shortId FROM Short s WHERE s.ownerId = '%s'", userId); // Isto está
-                                                                                                      // certo?
-        var result = Hibernate.getInstance().jpql(query, String.class);
-
-        return Result.ok(result);
+        var result = hibernateQuery(String.format(queryOwnerId, userId), String.class);
+        return result.error() == ErrorCode.OK ? Result.ok(result.value()) : Result.error(result.error());
     }
 
     @Override
     public Result<Void> follow(String userId1, String userId2, boolean isFollowing, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'follow'");
+        var check1 = checkUserIdAndPassword(userId1, password);
+
+        if(check1.error() != ErrorCode.OK)
+            return Result.error(check1.error());
+
+        var check2 = hasUser(userId2);
+
+        if(check2.error() != ErrorCode.OK)
+            return Result.error(check2.error());
+
+        User u1 = check1.value();
+        User u2 = check2.value();
+        
+        if(isFollowing) {
+            u1.follow(userId2);
+            u2.addFollower(userId1);
+        } else {
+            u1.unfollow(userId2);
+            u2.removeFollower(userId1);
+        }
+
+        Result<Void> result = updateUser(userId1, password, u1);
+        if(result.isOK())
+            return updateUser(userId2, password, u2);
+        else
+            return Result.error(result.error());
     }
+
 
     @Override
     public Result<List<String>> followers(String userId, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'followers'");
+        var check = checkUserIdAndPassword(userId, password);
+
+        if(check.error() != ErrorCode.OK)
+            return Result.error(check.error());
+
+        return Result.ok(check.value().followers());
     }
+
 
     @Override
     public Result<Void> like(String shortId, String userId, boolean isLiked, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'like'");
+        var check = checkUserIdAndPassword(userId, password);
+
+        if(check.error() != ErrorCode.OK)
+            return Result.error(check.error());
+
+        var shortResult = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+        
+        if(shortResult.error() != ErrorCode.OK)
+            return Result.error(shortResult.error());
+
+        User u = check.value();
+        Short s = shortResult.value().get(0);
+
+        if(isLiked) {
+            u.like(shortId);
+            s.addLike(userId);
+        } else {
+            u.unlike(shortId);
+            s.removeLike(userId);
+        }
+
+        Hibernate.getInstance().update(s);
+        return updateUser(userId, password, u);
     }
 
     @Override
     public Result<List<String>> likes(String shortId, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'likes'");
+        var shortResult = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+
+        if(shortResult.error() != ErrorCode.OK)
+            return Result.error(shortResult.error());
+
+        Short s = shortResult.value().get(0);
+        return Result.ok(s.getLikes());
     }
 
     @Override
     public Result<List<String>> getFeed(String userId, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getFeed'");
+        var check = checkUserIdAndPassword(userId, password);
+
+        if(check.error() != ErrorCode.OK)
+            return Result.error(check.error());
+
+        User u = check.value();
+        List<String> following = u.following();
+        var feed = new ArrayList<String>();
+
+        for(String f : following) {
+            var shorts = hibernateQuery(String.format(queryOwnerId, f), Short.class);
+
+            if(shorts.error() != ErrorCode.OK)
+                return Result.error(shorts.error());
+
+            for(Short s : shorts.value())
+                feed.add(s.getShortId());
+        }
+
+        return Result.ok(feed);
     }
 
-    public static ErrorCode getErrorCodeFrom(int status) {
-        return switch (status) {
-            case 200, 209 -> ErrorCode.OK;
-            case 409 -> ErrorCode.CONFLICT;
-            case 403 -> ErrorCode.FORBIDDEN;
-            case 404 -> ErrorCode.NOT_FOUND;
-            case 400 -> ErrorCode.BAD_REQUEST;
-            case 500 -> ErrorCode.INTERNAL_ERROR;
-            case 501 -> ErrorCode.NOT_IMPLEMENTED;
-            default -> ErrorCode.INTERNAL_ERROR;
-        };
+    @Override
+    public Result<User> checkUserIdAndPassword(String userId, String pwd) {
+        return super.reTry(() -> svr_checkUserIdAndPassword(userId, pwd));
+    }
+
+    @Override
+    public Result<User> hasUser(String userId) {
+        return super.reTry(() -> svr_hasUser(userId));
+    }
+
+    @Override
+    public Result<Void> updateUser(String userId, String pwd, User user) {
+        return super.reTry(() -> svr_updateUser(userId, pwd, user));
+    }
+
+    private Result<Void> svr_updateUser(String userId, String pwd, User user) {
+        return (userId != null || pwd != null || user != null) ? Result.error(ErrorCode.BAD_REQUEST) :
+        super.toJavaResult(
+                usTarget.path( userId )
+                .queryParam(RestUsers.PWD, pwd).request()
+                .accept(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(user, MediaType.APPLICATION_JSON)), Void.class);
+    }
+
+    private Result<User> svr_checkUserIdAndPassword(String userId, String pwd) {
+        return (userId != null || pwd != null) ? Result.error(ErrorCode.BAD_REQUEST) :
+        super.toJavaResult(
+                usTarget.path( userId )
+                .queryParam(RestUsers.PWD, pwd).request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(), User.class);
+    }
+
+    private Result<User> svr_hasUser(String userId) {
+        return (userId != null) ? Result.error(ErrorCode.BAD_REQUEST) :
+        super.toJavaResult(
+                usTarget.path( userId )
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(), User.class);
     }
 }

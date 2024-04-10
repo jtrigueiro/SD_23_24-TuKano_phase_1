@@ -138,4 +138,25 @@ public interface Shorts {
 	 */
 	public Result<User> checkUserIdAndPassword(String userId, String pwd);
 
+	/**
+	 * Checks if a user exists.
+	 * 
+	 * @param userId the user to be checked
+	 * @return (OK, User) if the user exists;
+	 *         NOT_FOUND if the user does not exist;
+	 */
+	public Result<User> hasUser(String userId);
+
+	/**
+	 * Updates the information of a user.
+	 * 
+	 * @param userId the user to be updated
+	 * @param pwd    the password of the user
+	 * @param user   the new information
+	 * @return (OK, void) if the user was updated;
+	 *         NOT_FOUND if the user does not exist;
+	 *         FORBIDDEN if the password is incorrect;
+	 *         BAD_REQUEST if the user information is invalid.
+	 */
+	public Result<Void> updateUser(String userId, String pwd, User user);
 }
