@@ -18,13 +18,13 @@ import java.util.List;
  *
  */
 @Entity
-public class Short {
+public class Short implements Comparable<Short>{
 	@Id
 	private String shortId;
 	private String ownerId;
 	private String blobUrl;
 	private long timestamp;
-	private Set<String> likes = new HashSet<>();
+	private Set<String> likes;
 
 	public Short() {
 	}
@@ -43,6 +43,11 @@ public class Short {
 		this.blobUrl = blobUrl;
 		this.timestamp = timestamp;
 		this.likes = likes;
+	}
+
+	@Override
+	public int compareTo(Short o2) {
+		return Long.compare(this.timestamp, o2.getTimestamp());
 	}
 
 	public void addLike(String userId) {

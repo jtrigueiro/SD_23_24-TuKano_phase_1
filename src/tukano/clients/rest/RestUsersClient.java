@@ -17,6 +17,7 @@ import tukano.api.User;
 import tukano.api.java.Users;
 import tukano.api.rest.RestUsers;
 import tukano.api.Discovery;
+import tukano.api.Short;
 
 
 public class RestUsersClient extends RestClient implements Users {
@@ -68,7 +69,7 @@ public class RestUsersClient extends RestClient implements Users {
 		return super.toJavaResult(
 				usTarget.path(userId)
 				.queryParam(RestUsers.PWD, password)
-				.request()
+				.request().accept(MediaType.APPLICATION_JSON)
 				.put(Entity.entity(user, MediaType.APPLICATION_JSON)), User.class);
 	}
 
@@ -85,6 +86,38 @@ public class RestUsersClient extends RestClient implements Users {
 				usTarget.queryParam(RestUsers.QUERY, pattern)
 				.request(MediaType.APPLICATION_JSON)
 				.get(), new GenericType<List<User>>() {});
+	}
+
+	private Result<Void> clt_createShort(String userId, String password, byte[] bytes) {
+		Result<Short> result = super.toJavaResult(
+				ssTarget.path(userId)
+				.queryParam(RestUsers.PWD, password)
+				.request().post(null), Short.class);
+
+		if(!result.isOK())
+			return Result.error(result.error());
+
+		Short s = result.value();
+		URI blobURI = URI.create(s.getBlobUrl());
+		WebTarget target = client.target(blobURI);
+
+		Result<Void> upload = super.toJavaResult(target
+		.path(s.getShortId())
+		.request().accept(MediaType.APPLICATION_OCTET_STREAM)
+		.post(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM)), Void.class);
+
+		return upload.isOK() ? Result.ok() : Result.error(upload.error());
+	}
+
+	private Result<Void> clt_uploadShort(Short s, byte[] bytes) {
+		String blobUrl = s.getBlobUrl();
+		URI blobURI = URI.create(blobUrl);
+		WebTarget target = client.target(blobURI);
+
+		return super.toJavaResult(
+				target.path(s.getShortId())
+				.request()
+				.put(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM)), Void.class);
 	}
 
 	@Override
@@ -110,5 +143,15 @@ public class RestUsersClient extends RestClient implements Users {
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
 		return super.reTry( () -> clt_searchUsers(pattern));
+	}
+
+	@Override
+	public Result<Void> createShort(String userId, String password, byte[] bytes) {
+		return super.reTry( () -> clt_createShort(userId, password, bytes));
+	}
+
+	@Override
+	public Result<Void> uploadShort(Short s, byte[] bytes) {
+		return super.reTry( () -> clt_uploadShort(s, bytes));
 	}
 }

@@ -21,12 +21,14 @@ public interface RestShorts {
 	String USER_ID1 = "userId1";
 	String USER_ID2 = "userId2";
 	String SHORT_ID = "shortId";
+	String BLOB_ID = "blobId";
 
 	String PWD = "pwd";
 	String FEED = "/feed";
 	String LIKES = "/likes";
 	String SHORTS = "/shorts";
 	String FOLLOWERS = "/followers";
+	String CHECK = "/check";
 
 	@POST
 	@Path("/{" + USER_ID + "}")
@@ -72,4 +74,9 @@ public interface RestShorts {
 	@GET
 	@Path("/{" + USER_ID + "}" + FEED )
 	List<String> getFeed(@PathParam(USER_ID) String userId, @QueryParam(PWD) String password);
+
+	@GET
+	@Path("/{" + BLOB_ID + "}" + CHECK )
+	void check(@PathParam(BLOB_ID) String BlobId);
+
 }

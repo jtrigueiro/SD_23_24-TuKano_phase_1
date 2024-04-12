@@ -159,4 +159,14 @@ public interface Shorts {
 	 *         BAD_REQUEST if the user information is invalid.
 	 */
 	public Result<Void> updateUser(String userId, String pwd, User user);
+
+	
+	/**
+	 * Checks if a blobId exists.
+	 * 
+	 * @param blobId the blobId to be checked
+	 * @return (OK, void) if the blobId exists;
+	 *         NOT_FOUND if the blobId does not exist;
+	 */
+	public Result<Void> checkBlobId(String blobId);
 }

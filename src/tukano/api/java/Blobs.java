@@ -52,4 +52,14 @@ public interface Blobs {
 		sink.accept(res.value());
 		return Result.ok();
 	}
+
+	/**
+	 * Checks if a blobId is valid by querying the Shorts service.
+	 * 
+	 * @param blobId the identifier to check
+	 * @return OK if the blobId is valid;
+	 *         BAD_REQUEST if the blobId is null;
+	 *         NOT_FOUND if the blobId is not valid
+	 */
+	Result<Void> checkBlobId(String blobId);
 }

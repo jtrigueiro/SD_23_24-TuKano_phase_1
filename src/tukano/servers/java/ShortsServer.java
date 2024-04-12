@@ -2,6 +2,8 @@ package tukano.servers.java;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import tukano.api.Short;
@@ -40,6 +42,8 @@ public class ShortsServer extends RestServer implements Shorts {
     private static String queryOwnerId = "SELECT s FROM Short s WHERE s.ownerId = '%s'";
     private static Discovery discovery;
 
+    private int currentBlob;
+    private HashSet<String> verifiers;
 
     public ShortsServer(URI serverURI) {
         this.config = new ClientConfig();
@@ -55,6 +59,9 @@ public class ShortsServer extends RestServer implements Shorts {
         usersServer = discovery.knownUrisOf("users", 1);
         blobServers = discovery.knownUrisOf("blobs", 3);
 
+        currentBlob = 0;
+        verifiers = new HashSet<>();
+
         usTarget = client.target(usersServer[0]).path(RestUsers.PATH);
         for(int i = 0 ; i < blobServers.length; i++)
             bTargets[i] = client.target(blobServers[i]).path(RestUsers.PATH);
@@ -66,8 +73,10 @@ public class ShortsServer extends RestServer implements Shorts {
 
         if(!result.isOK())
             return Result.error(result.error());
+
+        Short s = new Short(userId, getCurrentBlobURI());
+        verifiers.add(s.getShortId());
         
-        Short s = new Short(userId, "blobUrl");
         Hibernate.getInstance().persist(s);
         return Result.ok(s);
     }
@@ -131,10 +140,13 @@ public class ShortsServer extends RestServer implements Shorts {
         }
 
         Result<Void> result = updateUser(userId1, password, u1);
-        if(result.isOK())
-            return updateUser(userId2, password, u2);
-        else
-            return Result.error(result.error());
+        if(result.isOK()) {
+            result = updateUser(userId2, u2.getPwd(), u2);
+            if(result.isOK())
+                return Result.ok();
+        }
+        
+        return Result.error(result.error());        
     }
 
 
@@ -183,6 +195,10 @@ public class ShortsServer extends RestServer implements Shorts {
         if(shortResult.error() != ErrorCode.OK)
             return Result.error(shortResult.error());
 
+        Result<User> check = checkUserIdAndPassword(shortResult.value().get(0).getOwnerId(), password);
+        if(check.error() != ErrorCode.OK)
+            return Result.error(check.error());
+
         Short s = shortResult.value().get(0);
         return Result.ok(s.getLikes());
     }
@@ -196,17 +212,23 @@ public class ShortsServer extends RestServer implements Shorts {
 
         User u = check.value();
         List<String> following = u.following();
-        var feed = new ArrayList<String>();
+        List<Short> shorts = new ArrayList<>();
 
         for(String f : following) {
-            var shorts = hibernateQuery(String.format(queryOwnerId, f), Short.class);
+            var result = hibernateQuery(String.format(queryOwnerId, f), Short.class);
 
-            if(shorts.error() != ErrorCode.OK)
-                return Result.error(shorts.error());
+            if(result.error() != ErrorCode.OK)
+                return Result.error(result.error());
 
-            for(Short s : shorts.value())
-                feed.add(s.getShortId());
+            for(Short s : result.value())
+                shorts.add(s);
         }
+
+        shorts.sort(Comparator.naturalOrder());
+        List<String> feed = new ArrayList<>();
+
+        for(Short s : shorts)
+            feed.add(s.getShortId());
 
         return Result.ok(feed);
     }
@@ -240,16 +262,23 @@ public class ShortsServer extends RestServer implements Shorts {
         super.toJavaResult(
                 usTarget.path( userId )
                 .queryParam(RestUsers.PWD, pwd).request()
-                .accept(MediaType.APPLICATION_JSON)
                 .get(), User.class);
     }
 
     private Result<User> svr_hasUser(String userId) {
         return (userId != null) ? Result.error(ErrorCode.BAD_REQUEST) :
         super.toJavaResult(
-                usTarget.path( userId )
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
+                usTarget.path( userId ).request()
                 .get(), User.class);
     }
+
+    private String getCurrentBlobURI() {
+        return blobServers[currentBlob++ % bTargets.length].toString();
+    }
+
+    @Override
+    public Result<Void> checkBlobId(String blobId) {
+        return verifiers.contains(blobId) ? Result.ok() : Result.error(ErrorCode.NOT_FOUND);
+    }
+    
 }

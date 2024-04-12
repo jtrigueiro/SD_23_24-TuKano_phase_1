@@ -162,33 +162,5 @@ public class UsersServer extends RestServer implements Users {
 		
 		return Result.ok(matchingUsers);
 	}
-
-// -------------------------NAO USADO??-------------------------------
-	 /*
-	 * @Override
-	 * public Result<Void> checkPassword(String userId, String pwd) {
-	 * Log.info("checkPassword : user = " + userId + "; pwd = " + pwd);
-	 * 
-	 * // Check if user is valid
-	 * if (userId == null || pwd == null) {
-	 * Log.info("Invalid user data.");
-	 * return Result.error(ErrorCode.BAD_REQUEST);
-	 * }
-	 * 
-	 * // Check if user exists
-	 * if (!users.containsKey(userId)) {
-	 * Log.info("User does not exist.");
-	 * return Result.error(ErrorCode.NOT_FOUND);
-	 * }
-	 * 
-	 * // Check if the password is correct
-	 * User existingUser = users.get(userId);
-	 * if (!existingUser.pwd().equals(pwd)) {
-	 * Log.info("Password is incorrect.");
-	 * return Result.error(ErrorCode.FORBIDDEN);
-	 * }
-	 * 
-	 * return Result.ok();
-	 * }
-	 */
+	 
 }
