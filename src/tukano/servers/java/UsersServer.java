@@ -44,9 +44,9 @@ public class UsersServer extends RestServer implements Users {
 		this.client = ClientBuilder.newClient(config);
 
 		discovery = Discovery.getInstance();
-		discovery.announce("UsersService", serverURI.toString());
+		discovery.announce("users", serverURI.toString());
 
-		//shortsServer = discovery.knownUrisOf("ShortsService", 1);
+		//shortsServer = discovery.knownUrisOf("shorts", 1);
 
 		//ssTarget = client.target(shortsServer[0]).path(RestShorts.PATH);
 	}

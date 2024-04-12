@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.logging.Logger;
+//import jakarta.ws.rs.client.WebTarget;
+
 
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
@@ -14,13 +16,20 @@ import tukano.api.Discovery;
 public class BlobServer extends RestServer implements Blobs {
     private final Map<String, byte[]> blobs = new HashMap<>();
     private static Logger Log = Logger.getLogger(BlobServer.class.getName());
+
     final URI serverURI;
+    final URI[] shortsServer;
+    //final WebTarget ssTarget;
 
     public BlobServer(URI serverURI) {
         this.serverURI = serverURI;
 
         Discovery discovery = Discovery.getInstance();
-        discovery.announce("BlobsService", serverURI.toString());
+        discovery.announce("blobs", serverURI.toString());
+
+        shortsServer = discovery.knownUrisOf("shorts", 1);
+        //ssTarget = client.target(shortsServer[0]).path(RestShorts.PATH);
+
     }
 
     @Override

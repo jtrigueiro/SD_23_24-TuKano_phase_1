@@ -50,10 +50,10 @@ public class ShortsServer extends RestServer implements Shorts {
         this.client = ClientBuilder.newClient(config);
 
         discovery = Discovery.getInstance();
-        discovery.announce("ShortsService", serverURI.toString());
+        discovery.announce("shorts", serverURI.toString());
 
-        usersServer = discovery.knownUrisOf("UsersService", 1);
-        blobServers = discovery.knownUrisOf("BlobsService", 3);
+        usersServer = discovery.knownUrisOf("users", 1);
+        blobServers = discovery.knownUrisOf("blobs", 3);
 
         usTarget = client.target(usersServer[0]).path(RestUsers.PATH);
         for(int i = 0 ; i < blobServers.length; i++)
@@ -91,8 +91,8 @@ public class ShortsServer extends RestServer implements Shorts {
 
     @Override
     public Result<Short> getShort(String shortId) {
-
         var result = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+
         return result.error() == ErrorCode.OK ? Result.ok(result.value().get(0)) : Result.error(result.error());
     }
 

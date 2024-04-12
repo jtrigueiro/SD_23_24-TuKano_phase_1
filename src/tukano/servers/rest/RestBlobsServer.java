@@ -16,14 +16,14 @@ public class RestBlobsServer {
 	}
 
 	public static final int PORT = 8080;
-	public static final String SERVICE = "BlobsService";
+	public static final String SERVICE = "blobs";
 	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
 
 	public static void main(String[] args) {
 		try {
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(  RestShortsResource.class );
+			config.register(  RestBlobsResource.class );
 			
 			String ip = InetAddress.getLocalHost().getHostAddress();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
