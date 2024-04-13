@@ -62,4 +62,9 @@ public class RestShortsResource extends RestResource implements RestShorts {
         return resultOrThrow(impl.getFeed(userId, password));
     }
 
+    @Override
+    public void checkBlobId(String BlobId) {
+        resultOrThrow(impl.checkBlobId(BlobId));
+    }
+
 }

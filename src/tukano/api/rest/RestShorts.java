@@ -56,7 +56,7 @@ public interface RestShorts {
 			@QueryParam(PWD) String password);
 
 	@GET
-	@Path("/{" + USER_ID + "}" + FOLLOWERS )
+	@Path("/{" + USER_ID + "}" + FOLLOWERS)
 	@Produces(MediaType.APPLICATION_JSON)
 	List<String> followers(@PathParam(USER_ID) String userId, @QueryParam(PWD) String password);
 
@@ -72,11 +72,11 @@ public interface RestShorts {
 	List<String> likes(@PathParam(SHORT_ID) String shortId, @QueryParam(PWD) String password);
 
 	@GET
-	@Path("/{" + USER_ID + "}" + FEED )
+	@Path("/{" + USER_ID + "}" + FEED)
 	List<String> getFeed(@PathParam(USER_ID) String userId, @QueryParam(PWD) String password);
 
 	@GET
-	@Path("/{" + BLOB_ID + "}" + CHECK )
-	void check(@PathParam(BLOB_ID) String BlobId);
+	@Path("/{" + BLOB_ID + "}" + CHECK)
+	void checkBlobId(@PathParam(BLOB_ID) String BlobId);
 
 }

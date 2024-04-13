@@ -19,7 +19,6 @@ import tukano.api.rest.RestUsers;
 import tukano.api.Discovery;
 import tukano.api.Short;
 
-
 public class RestUsersClient extends RestClient implements Users {
 	protected static final int READ_TIMEOUT = 5000;
 	protected static final int CONNECT_TIMEOUT = 5000;
@@ -51,50 +50,57 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<String> clt_createUser(User user) {
-    	return super.toJavaResult( 
-    		usTarget.request()
-    		.accept(MediaType.APPLICATION_JSON)
-    		.post(Entity.entity(user, MediaType.APPLICATION_JSON)), String.class );
-    }
+		return super.toJavaResult(
+				usTarget.request()
+						.accept(MediaType.APPLICATION_JSON)
+						.post(Entity.entity(user, MediaType.APPLICATION_JSON)),
+				String.class);
+	}
 
 	private Result<User> clt_getUser(String userId, String pwd) {
-    	return super.toJavaResult(
-    			usTarget.path( userId )
-    			.queryParam(RestUsers.PWD, pwd).request()
-    			.accept(MediaType.APPLICATION_JSON)
-    			.get(), User.class);
-    }
+		return super.toJavaResult(
+				usTarget.path(userId)
+						.queryParam(RestUsers.PWD, pwd).request()
+						.accept(MediaType.APPLICATION_JSON)
+						.get(),
+				User.class);
+	}
 
 	private Result<User> clt_updateUser(String userId, String password, User user) {
 		return super.toJavaResult(
 				usTarget.path(userId)
-				.queryParam(RestUsers.PWD, password)
-				.request().accept(MediaType.APPLICATION_JSON)
-				.put(Entity.entity(user, MediaType.APPLICATION_JSON)), User.class);
+						.queryParam(RestUsers.PWD, password)
+						.request().accept(MediaType.APPLICATION_JSON)
+						.put(Entity.entity(user, MediaType.APPLICATION_JSON)),
+				User.class);
 	}
 
 	private Result<User> clt_deleteUser(String userId, String password) {
 		return super.toJavaResult(
 				usTarget.path(userId)
-				.queryParam(RestUsers.PWD, password)
-				.request()
-				.delete(), User.class);
+						.queryParam(RestUsers.PWD, password)
+						.request()
+						.delete(),
+				User.class);
 	}
 
 	private Result<List<User>> clt_searchUsers(String pattern) {
 		return super.toJavaResult(
 				usTarget.queryParam(RestUsers.QUERY, pattern)
-				.request(MediaType.APPLICATION_JSON)
-				.get(), new GenericType<List<User>>() {});
+						.request(MediaType.APPLICATION_JSON)
+						.get(),
+				new GenericType<List<User>>() {
+				});
 	}
 
 	private Result<Void> clt_createShort(String userId, String password, byte[] bytes) {
 		Result<Short> result = super.toJavaResult(
 				ssTarget.path(userId)
-				.queryParam(RestUsers.PWD, password)
-				.request().post(null), Short.class);
+						.queryParam(RestUsers.PWD, password)
+						.request().post(null),
+				Short.class);
 
-		if(!result.isOK())
+		if (!result.isOK())
 			return Result.error(result.error());
 
 		Short s = result.value();
@@ -102,56 +108,47 @@ public class RestUsersClient extends RestClient implements Users {
 		WebTarget target = client.target(blobURI);
 
 		Result<Void> upload = super.toJavaResult(target
-		.path(s.getShortId())
-		.request().accept(MediaType.APPLICATION_OCTET_STREAM)
-		.post(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM)), Void.class);
+				.path(s.getShortId())
+				.request().accept(MediaType.APPLICATION_OCTET_STREAM)
+				.post(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM)), Void.class);
 
 		return upload.isOK() ? Result.ok() : Result.error(upload.error());
 	}
 
-	private Result<Void> clt_uploadShort(Short s, byte[] bytes) {
-		String blobUrl = s.getBlobUrl();
-		URI blobURI = URI.create(blobUrl);
-		WebTarget target = client.target(blobURI);
-
-		return super.toJavaResult(
-				target.path(s.getShortId())
-				.request()
-				.put(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM)), Void.class);
-	}
-
 	@Override
 	public Result<String> createUser(User user) {
-		return super.reTry( () -> clt_createUser(user));
+		return super.reTry(() -> clt_createUser(user));
 	}
 
 	@Override
-    public Result<User> getUser(String userId, String pwd) {
-    	return super.reTry( () -> clt_getUser(userId, pwd));
-    }
+	public Result<User> getUser(String userId, String pwd) {
+		return super.reTry(() -> clt_getUser(userId, pwd));
+	}
 
 	@Override
 	public Result<User> updateUser(String userId, String password, User user) {
-		return super.reTry( () -> clt_updateUser(userId, password, user));
+		return super.reTry(() -> clt_updateUser(userId, password, user));
 	}
 
 	@Override
 	public Result<User> deleteUser(String userId, String password) {
-		return super.reTry( () -> clt_deleteUser(userId, password));
+		return super.reTry(() -> clt_deleteUser(userId, password));
 	}
 
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
-		return super.reTry( () -> clt_searchUsers(pattern));
+		return super.reTry(() -> clt_searchUsers(pattern));
 	}
 
 	@Override
 	public Result<Void> createShort(String userId, String password, byte[] bytes) {
-		return super.reTry( () -> clt_createShort(userId, password, bytes));
+		return super.reTry(() -> clt_createShort(userId, password, bytes));
 	}
 
+	// nao é usado aqui
 	@Override
-	public Result<Void> uploadShort(Short s, byte[] bytes) {
-		return super.reTry( () -> clt_uploadShort(s, bytes));
+	public Result<User> checkUserId(String userId) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'checkUserId'");
 	}
 }

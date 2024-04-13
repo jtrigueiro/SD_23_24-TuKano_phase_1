@@ -17,38 +17,39 @@ import tukano.persistence.Hibernate;
 import tukano.api.User;
 import tukano.api.java.Users;
 import tukano.api.Discovery;
+import tukano.api.Short;
 
 public class UsersServer extends RestServer implements Users {
 	protected static final int READ_TIMEOUT = 5000;
-    protected static final int CONNECT_TIMEOUT = 5000;
+	protected static final int CONNECT_TIMEOUT = 5000;
 
 	private static String queryUserId = "SELECT u FROM User u WHERE u.userId = '%s'";
 	private static String queryAll = "SELECT u FROM User u";
 
 	final Client client;
-    final ClientConfig config;
+	final ClientConfig config;
 
 	private static Discovery discovery;
 	final URI serverURI;
 
-	//private URI[] shortsServer;
-	//private WebTarget ssTarget;
-	
+	// private URI[] shortsServer;
+	// private WebTarget ssTarget;
+
 	public UsersServer(URI serverURI) {
 		this.serverURI = serverURI;
 		this.config = new ClientConfig();
 
-        config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
-        config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
+		config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
+		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
 		this.client = ClientBuilder.newClient(config);
 
 		discovery = Discovery.getInstance();
 		discovery.announce("users", serverURI.toString());
 
-		//shortsServer = discovery.knownUrisOf("shorts", 1);
+		// shortsServer = discovery.knownUrisOf("shorts", 1);
 
-		//ssTarget = client.target(shortsServer[0]).path(RestShorts.PATH);
+		// ssTarget = client.target(shortsServer[0]).path(RestShorts.PATH);
 	}
 
 	@Override
@@ -60,12 +61,7 @@ public class UsersServer extends RestServer implements Users {
 
 		var result = hibernateQuery(String.format(queryUserId, user.userId()), User.class);
 
-		// Query error
-		if(result.error() != ErrorCode.OK)
-			return Result.error(result.error());
-
-		// Insert user, checking if name already exists
-		if (!result.value().isEmpty())
+		if (result.error() == ErrorCode.OK)
 			return Result.error(ErrorCode.CONFLICT);
 
 		Hibernate.getInstance().persist(user);
@@ -82,8 +78,8 @@ public class UsersServer extends RestServer implements Users {
 		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
 
 		// Query error
-		if(result.error() != ErrorCode.OK)
-			return Result.error(result.error());
+		if (result.error() != ErrorCode.OK)
+			return Result.error(ErrorCode.NOT_FOUND);
 
 		User user = result.value().get(0);
 
@@ -104,8 +100,8 @@ public class UsersServer extends RestServer implements Users {
 		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
 
 		// Query error
-		if(result.error() != ErrorCode.OK)
-			return Result.error(result.error());
+		if (result.error() != ErrorCode.OK)
+			return Result.error(ErrorCode.NOT_FOUND);
 
 		User dbUser = result.value().get(0);
 
@@ -128,8 +124,8 @@ public class UsersServer extends RestServer implements Users {
 		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
 
 		// Query error
-		if(result.error() != ErrorCode.OK)
-			return Result.error(result.error());
+		if (result.error() != ErrorCode.OK)
+			return Result.error(ErrorCode.NOT_FOUND);
 
 		User user = result.value().get(0);
 
@@ -141,16 +137,15 @@ public class UsersServer extends RestServer implements Users {
 		Hibernate.getInstance().delete(user);
 		return Result.ok(user);
 	}
-	
-	
+
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
 
 		var result = hibernateQuery(queryAll, User.class);
 
 		// Query error
-		if(result.error() != ErrorCode.OK)
-			return Result.error(result.error());
+		if (result.error() != ErrorCode.OK)
+			return Result.error(ErrorCode.BAD_REQUEST);
 
 		List<User> users = result.value();
 		List<User> matchingUsers = new ArrayList<>();
@@ -159,8 +154,32 @@ public class UsersServer extends RestServer implements Users {
 			if (user.displayName().contains(pattern))
 				matchingUsers.add(user);
 		}
-		
+
 		return Result.ok(matchingUsers);
 	}
-	 
+
+	// nao é usado aqui
+	@Override
+	public Result<Void> createShort(String userId, String password, byte[] bytes) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'createShort'");
+	}
+
+	public Result<User> checkUserId(String userId) {
+
+		// Check if user is valid
+		if (userId == null)
+			return Result.error(ErrorCode.BAD_REQUEST);
+
+		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
+
+		// Query error
+		if (result.error() != ErrorCode.OK)
+			return Result.error(ErrorCode.NOT_FOUND);
+
+		User user = result.value().get(0);
+
+		return Result.ok(user);
+	}
+
 }

@@ -79,23 +79,25 @@ public interface Users {
 	 * @param userId   - the userId of the user
 	 * @param password - the password of the user
 	 * @param bytes    - the video as a byte array
-	 * @return OK and the short object, if the userId exists and password matches the
-	 * 	   existing password;
-	 * 	   FORBIDDEN - if the password is incorrect;
-	 * 	   NOT_FOUND - if no user exists with the provided userId
-	 * 	   BAD_REQUEST - otherwise.
+	 * @return OK and the short object, if the userId exists and password matches
+	 *         the
+	 *         existing password;
+	 *         FORBIDDEN - if the password is incorrect;
+	 *         NOT_FOUND - if no user exists with the provided userId
+	 *         BAD_REQUEST - otherwise.
 	 * 
 	 */
 	Result<Void> createShort(String userId, String password, byte[] bytes);
 
 	/**
-	 * Uploads the video of a short
+	 * Obtains the feed of shorts of the user identified by userId
 	 * 
-	 * @param s     - the short object
-	 * @param bytes - the video as a byte array
-	 * @return OK if the upload was successful
-	 *         BAD_REQUEST - otherwise
+	 * @param userId - the userId of the user
+	 * @return OK and the list of shortIds of the shorts in the feed, if the userId
+	 *         exists and password matches the existing password;
+	 *         NOT_FOUND - if no user exists with the provided userId
+	 *         BAD_REQUEST - otherwise.
 	 */
-	Result<Void> uploadShort(Short s, byte[] bytes);
+	Result<User> checkUserId(String userId);
 
 }

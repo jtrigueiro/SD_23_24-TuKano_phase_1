@@ -15,7 +15,6 @@ import jakarta.ws.rs.core.MediaType;
 
 import tukano.api.User;
 
-
 @Path(RestUsers.PATH)
 public interface RestUsers {
 
@@ -24,6 +23,7 @@ public interface RestUsers {
 	String PWD = "pwd";
 	String QUERY = "query";
 	String USER_ID = "userId";
+	String CHECK = "/check";
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -51,6 +51,8 @@ public interface RestUsers {
 	List<User> searchUsers(@QueryParam(QUERY) String pattern);
 
 	@GET
-	
+	@Path("/{" + USER_ID + "}" + CHECK)
+	@Produces(MediaType.APPLICATION_JSON)
+	User checkUserId(@PathParam(USER_ID) String userId);
 
 }
