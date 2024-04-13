@@ -23,20 +23,20 @@ public class RestUsersServer {
 		try {
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(  RestUsersResource.class );
-			
+			config.register(RestUsersResource.class);
+
 			String ip = InetAddress.getLocalHost().getHostAddress();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);
 
-			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));			
-			
+			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
+
 			// More code can be executed here...
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.severe(e.getMessage());
+			// e.printStackTrace();
 		}
-		
-		
+
 	}
-	
+
 }
