@@ -7,6 +7,9 @@ import tukano.api.java.Result;
 
 public class RestResource {
 
+    RestResource() {
+    }
+
     /**
      * Given a Result<T>, either returns the value, or throws the JAX-WS Exception
      * matching the error code...
