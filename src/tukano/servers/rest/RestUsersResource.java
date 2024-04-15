@@ -1,7 +1,6 @@
 package tukano.servers.rest;
 
 import java.util.List;
-import java.net.URI;
 
 import jakarta.inject.Singleton;
 
@@ -15,8 +14,8 @@ public class RestUsersResource extends RestResource implements RestUsers {
 
 	final Users impl;
 
-	public RestUsersResource(URI serverURI) {
-		this.impl = new UsersServer(serverURI);
+	public RestUsersResource() {
+		this.impl = new UsersServer();
 	}
 
 	@Override

@@ -26,13 +26,11 @@ public class UsersServer extends RestServer implements Users {
 
 	final Client client;
 	final ClientConfig config;
-	final URI serverURI;
 
 	// private URI[] shortsServer;
 	// private WebTarget ssTarget;
 
-	public UsersServer(URI serverURI) {
-		this.serverURI = serverURI;
+	public UsersServer() {
 		this.config = new ClientConfig();
 
 		config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);

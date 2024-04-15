@@ -2,6 +2,8 @@ package tukano.servers.rest;
 
 import java.util.List;
 
+import jakarta.inject.Singleton;
+
 import java.net.URI;
 
 import tukano.servers.java.ShortsServer;
@@ -9,6 +11,7 @@ import tukano.api.rest.RestShorts;
 import tukano.api.java.Shorts;
 import tukano.api.Short;
 
+@Singleton
 public class RestShortsResource extends RestResource implements RestShorts {
 
     final Shorts impl;
