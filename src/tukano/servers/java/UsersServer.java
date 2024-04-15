@@ -51,7 +51,7 @@ public class UsersServer extends RestServer implements Users {
 
 		var result = hibernateQuery(String.format(queryUserId, user.userId()), User.class);
 
-		if (result.error() == ErrorCode.OK)
+		if (result.isOK() && !result.value().isEmpty())
 			return Result.error(ErrorCode.CONFLICT);
 
 		Hibernate.getInstance().persist(user);
@@ -89,8 +89,7 @@ public class UsersServer extends RestServer implements Users {
 
 		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
 
-		// Query error
-		if (result.error() != ErrorCode.OK)
+		if (!result.isOK() || result.value().isEmpty())
 			return Result.error(ErrorCode.NOT_FOUND);
 
 		User dbUser = result.value().get(0);
@@ -99,9 +98,18 @@ public class UsersServer extends RestServer implements Users {
 		if (!dbUser.getPwd().equals(pwd))
 			return Result.error(ErrorCode.FORBIDDEN);
 
+		if (user.getUserId() != null && !user.getUserId().equals(userId))
+			return Result.error(ErrorCode.BAD_REQUEST);
+		if (user.getPwd() != null)
+			dbUser.setPwd(user.getPwd());
+		if (user.getEmail() != null)
+			dbUser.setEmail(user.getEmail());
+		if (user.getDisplayName() != null)
+			dbUser.setDisplayName(user.getDisplayName());
+
 		// Update the user
-		Hibernate.getInstance().update(user);
-		return Result.ok(user);
+		Hibernate.getInstance().update(dbUser);
+		return Result.ok(dbUser);
 	}
 
 	@Override
