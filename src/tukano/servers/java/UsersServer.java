@@ -13,11 +13,9 @@ import jakarta.ws.rs.client.ClientBuilder;
 import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
 //import tukano.api.rest.RestShorts;
-import tukano.persistence.Hibernate;
+import tukano.utils.Hibernate;
 import tukano.api.User;
 import tukano.api.java.Users;
-import tukano.api.Discovery;
-import tukano.api.Short;
 
 public class UsersServer extends RestServer implements Users {
 	protected static final int READ_TIMEOUT = 5000;
@@ -28,8 +26,6 @@ public class UsersServer extends RestServer implements Users {
 
 	final Client client;
 	final ClientConfig config;
-
-	private static Discovery discovery;
 	final URI serverURI;
 
 	// private URI[] shortsServer;
@@ -44,11 +40,7 @@ public class UsersServer extends RestServer implements Users {
 
 		this.client = ClientBuilder.newClient(config);
 
-		discovery = Discovery.getInstance();
-		discovery.announce("users", serverURI.toString());
-
 		// shortsServer = discovery.knownUrisOf("shorts", 1);
-
 		// ssTarget = client.target(shortsServer[0]).path(RestShorts.PATH);
 	}
 

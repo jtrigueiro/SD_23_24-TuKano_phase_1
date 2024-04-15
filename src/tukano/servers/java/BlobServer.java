@@ -17,7 +17,7 @@ import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
 import tukano.api.rest.RestShorts;
-import tukano.api.Discovery;
+import tukano.utils.Discovery;
 
 public class BlobServer extends RestServer implements Blobs {
     protected static final int READ_TIMEOUT = 5000;

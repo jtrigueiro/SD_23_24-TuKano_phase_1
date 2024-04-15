@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ProcessingException;
 import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
-import utils.Sleep;
+import tukano.utils.Sleep;
 
 public class RestClient {
     protected static final int MAX_RETRIES = 10;

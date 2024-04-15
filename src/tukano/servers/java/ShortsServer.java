@@ -12,7 +12,7 @@ import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
 import tukano.api.java.Shorts;
 import tukano.api.rest.RestUsers;
-import tukano.api.Discovery;
+import tukano.utils.Discovery;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -22,7 +22,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
-import tukano.persistence.Hibernate;
+import tukano.utils.Hibernate;
 
 public class ShortsServer extends RestServer implements Shorts {
 
@@ -52,9 +52,6 @@ public class ShortsServer extends RestServer implements Shorts {
         config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
         this.client = ClientBuilder.newClient(config);
-
-        discovery = Discovery.getInstance();
-        discovery.announce("shorts", serverURI.toString());
 
         usersServer = discovery.knownUrisOf("users", 1);
         blobServers = discovery.knownUrisOf("blobs", 3);

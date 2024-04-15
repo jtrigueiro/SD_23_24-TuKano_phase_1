@@ -1,4 +1,4 @@
-package utils;
+package tukano.utils;
 
 public class Sleep {
 

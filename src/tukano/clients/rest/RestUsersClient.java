@@ -6,6 +6,7 @@ import java.util.List;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 
+import jakarta.inject.Singleton;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -16,7 +17,6 @@ import tukano.api.java.Result;
 import tukano.api.User;
 import tukano.api.java.Users;
 import tukano.api.rest.RestUsers;
-import tukano.api.Discovery;
 import tukano.api.Short;
 
 public class RestUsersClient extends RestClient implements Users {
@@ -27,10 +27,12 @@ public class RestUsersClient extends RestClient implements Users {
 	final ClientConfig config;
 
 	final URI serverURI;
-	final WebTarget usTarget, ssTarget;
-	final URI[] usersServer, shortsServer, blobServers;
-	private static Discovery discovery;
+	final WebTarget target;
+	//final WebTarget usTarget, ssTarget;
+	//final URI[] usersServer, shortsServer, blobServers;
+	//private static Discovery discovery;
 
+	@Singleton
 	public RestUsersClient(URI serverURI) {
 		this.serverURI = serverURI;
 		this.config = new ClientConfig();
@@ -40,18 +42,19 @@ public class RestUsersClient extends RestClient implements Users {
 
 		this.client = ClientBuilder.newClient(config);
 
-		discovery = Discovery.getInstance();
-		usersServer = discovery.knownUrisOf("UsersService", 1);
-		shortsServer = discovery.knownUrisOf("ShortsService", 1);
-		blobServers = discovery.knownUrisOf("BlobsService", 3);
+		//discovery = Discovery.getInstance();
+		//usersServer = discovery.knownUrisOf("UsersService", 1);
+		//shortsServer = discovery.knownUrisOf("ShortsService", 1);
+		//blobServers = discovery.knownUrisOf("BlobsService", 3);
 
-		usTarget = client.target(usersServer[0]).path(RestUsers.PATH);
-		ssTarget = client.target(shortsServer[0]).path(RestUsers.PATH);
+		//usTarget = client.target(usersServer[0]).path(RestUsers.PATH);
+		//ssTarget = client.target(shortsServer[0]).path(RestUsers.PATH);
+		target = client.target(serverURI).path(RestUsers.PATH);
 	}
 
 	private Result<String> clt_createUser(User user) {
 		return super.toJavaResult(
-				usTarget.request()
+				target.request()
 						.accept(MediaType.APPLICATION_JSON)
 						.post(Entity.entity(user, MediaType.APPLICATION_JSON)),
 				String.class);
@@ -59,7 +62,7 @@ public class RestUsersClient extends RestClient implements Users {
 
 	private Result<User> clt_getUser(String userId, String pwd) {
 		return super.toJavaResult(
-				usTarget.path(userId)
+				target.path(userId)
 						.queryParam(RestUsers.PWD, pwd).request()
 						.accept(MediaType.APPLICATION_JSON)
 						.get(),
@@ -68,7 +71,7 @@ public class RestUsersClient extends RestClient implements Users {
 
 	private Result<User> clt_updateUser(String userId, String password, User user) {
 		return super.toJavaResult(
-				usTarget.path(userId)
+				target.path(userId)
 						.queryParam(RestUsers.PWD, password)
 						.request().accept(MediaType.APPLICATION_JSON)
 						.put(Entity.entity(user, MediaType.APPLICATION_JSON)),
@@ -77,7 +80,7 @@ public class RestUsersClient extends RestClient implements Users {
 
 	private Result<User> clt_deleteUser(String userId, String password) {
 		return super.toJavaResult(
-				usTarget.path(userId)
+				target.path(userId)
 						.queryParam(RestUsers.PWD, password)
 						.request()
 						.delete(),
@@ -86,7 +89,7 @@ public class RestUsersClient extends RestClient implements Users {
 
 	private Result<List<User>> clt_searchUsers(String pattern) {
 		return super.toJavaResult(
-				usTarget.queryParam(RestUsers.QUERY, pattern)
+				target.queryParam(RestUsers.QUERY, pattern)
 						.request(MediaType.APPLICATION_JSON)
 						.get(),
 				new GenericType<List<User>>() {
@@ -95,7 +98,7 @@ public class RestUsersClient extends RestClient implements Users {
 
 	private Result<Void> clt_createShort(String userId, String password, byte[] bytes) {
 		Result<Short> result = super.toJavaResult(
-				ssTarget.path(userId)
+				target.path(userId)
 						.queryParam(RestUsers.PWD, password)
 						.request().post(null),
 				Short.class);

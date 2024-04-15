@@ -1,31 +1,31 @@
 package tukano.clients;
 
-import java.io.IOException;
-import java.net.URI;
 import java.util.logging.Logger;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import tukano.api.java.Result;
-import tukano.clients.rest.RestUsersClient;
+import tukano.api.java.Shorts;
+import tukano.api.java.Users;
 
 public class CreateShort {
 	private static Logger Log = Logger.getLogger(CreateUser.class.getName());
 
 	public static void main(String[] args) throws IOException {
 		
-		if( args.length != 5) {
-			System.err.println( "Use: java lab2.clients.CreateShort url userId password ");
+		if( args.length != 3) {
+			System.err.println( "Use: java tukano.clients.CreateShort userId password bytes");
 			return;
 		}
 		
-		String serverUrl = args[0];
-		String userId = args[1];
-		String password = args[2];
+		String userId = args[0];
+		String password = args[1];
 		byte[] bytes = Files.readAllBytes( Paths.get( args[3] ) );
 
+		new ClientFactory();
+		Users client = ClientFactory.getClient(Shorts.NAME);
 		
-		var client = new RestUsersClient( URI.create( serverUrl ) );
 		Result<Void> result = client.createShort(userId, password, bytes);
 
 		if( result.isOK() ) {

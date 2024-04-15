@@ -1,11 +1,10 @@
 package tukano.clients;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.logging.Logger;
 
 import tukano.api.User;
-import tukano.clients.rest.RestUsersClient;
+import tukano.api.java.Users;
 
 public class UpdateUser {
 private static Logger Log = Logger.getLogger(UpdateUser.class.getName());
@@ -13,23 +12,23 @@ private static Logger Log = Logger.getLogger(UpdateUser.class.getName());
 	public static void main(String[] args) throws IOException {
 		
 		if( args.length != 7) {
-			System.err.println( "Use: java lab2.clients.CreateUser url userId password new_userId new_password new_email new_displayName ");
+			System.err.println( "Use: java tukano.clients.CreateUser userId password new_userId new_password new_email new_displayName ");
 			return;
 		}
 		
-		String serverUrl = args[0];
-		String userId = args[1];
-		String password = args[2];
-        String new_userId = args[3];
-		String new_password = args[4];
-		String new_email = args[5];
-		String new_displayName = args[6];
+		String userId = args[0];
+		String password = args[1];
+        String new_userId = args[2];
+		String new_password = args[3];
+		String new_email = args[4];
+		String new_displayName = args[5];
 		
-		var client = new RestUsersClient( URI.create( serverUrl ) );
+		new ClientFactory();
+		Users client = ClientFactory.getClient(Users.NAME);
 		
-		var new_user = new User( new_userId, new_password, new_email, new_displayName);		
-		
+		User new_user = new User( new_userId, new_password, new_email, new_displayName);		
 		var result = client.updateUser(userId, password, new_user);
+		
 		if( result.isOK() )
 			Log.info("Updated user:" + result.value() );
 		else

@@ -1,29 +1,28 @@
 package tukano.clients;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.logging.Logger;
 
-import tukano.clients.rest.RestUsersClient;
+import tukano.api.java.Users;
 
 public class DeleteUser {
     private static Logger Log = Logger.getLogger(DeleteUser.class.getName());
 
 	public static void main(String[] args) throws IOException {
 		
-		if( args.length != 3) {
-			System.err.println( "Use: java lab2.clients.DeleteUser url userId password");
+		if( args.length != 2) {
+			System.err.println( "Use: java tukano.clients.DeleteUser userId password");
 			return;
 		}
 		
-		String serverUrl = args[0];
-		String userId = args[1];
-		String pwd = args[2];
+		String userId = args[0];
+		String pwd = args[1];
 		
-		var client = new RestUsersClient( URI.create( serverUrl ) );
-		
+		new ClientFactory();
+		Users client = ClientFactory.getClient(Users.NAME);
 		
 		var result = client.deleteUser(userId, pwd);
+
 		if( result.isOK()  )
 			Log.info("Deleted user:" + result.value() );
 		else

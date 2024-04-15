@@ -2,7 +2,6 @@ package tukano.api.java;
 
 import java.util.List;
 import tukano.api.User;
-import tukano.api.Short;
 
 public interface Users {
 

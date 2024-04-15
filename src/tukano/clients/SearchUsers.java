@@ -1,25 +1,24 @@
 package tukano.clients;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.logging.Logger;
 
-import tukano.clients.rest.RestUsersClient;
+import tukano.api.java.Users;
 
 public class SearchUsers {
 	private static Logger Log = Logger.getLogger(SearchUsers.class.getName());
 
 	public static void main(String[] args) throws IOException {
 	
-		if( args.length != 2) {
-			System.err.println( "Use: java lab2.clients.GetUser url pattern");
+		if( args.length != 1) {
+			System.err.println( "Use: java tukano.clients.GetUser pattern");
 			return;
 		}
 		
-		String serverUrl = args[0];
-		String pattern = args[1];
+		String pattern = args[0];
 		
-		var client = new RestUsersClient( URI.create( serverUrl ) );
+		Users client = ClientFactory.getClient(Users.NAME);
+
 		var result = client.searchUsers(pattern);
 
 		if( result.isOK() )

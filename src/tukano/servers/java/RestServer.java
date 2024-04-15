@@ -2,13 +2,13 @@ package tukano.servers.java;
 
 import java.util.function.Supplier;
 import java.util.List;
-import tukano.persistence.Hibernate;
+import tukano.utils.Hibernate;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ProcessingException;
 import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
-import utils.Sleep;
+import tukano.utils.Sleep;
 
 public class RestServer {
     protected static final int MAX_RETRIES = 10;

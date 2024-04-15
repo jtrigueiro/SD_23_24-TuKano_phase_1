@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import tukano.utils.Discovery;
+
 public class RestBlobsServer {
 
 	private static Logger Log = Logger.getLogger(RestUsersServer.class.getName());
@@ -21,7 +23,8 @@ public class RestBlobsServer {
 
 	public static void main(String[] args) {
 		try {
-			//String blobId = args[0];
+			
+			String blobId = args[0];
 
 			ResourceConfig config = new ResourceConfig();
 			config.register(  RestBlobsResource.class );
@@ -32,7 +35,9 @@ public class RestBlobsServer {
 
 			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));			
 			
-			// More code can be executed here...
+			Discovery discovery = Discovery.getInstance();
+			discovery.announce(SERVICE, serverURI.toString());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
