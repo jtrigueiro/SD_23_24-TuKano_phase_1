@@ -91,12 +91,12 @@ public interface Users {
 	/**
 	 * Obtains the feed of shorts of the user identified by userId
 	 * 
-	 * @param userId - the userId of the user
+	 * @param blobId - the blobId of the blob
 	 * @return OK and the list of shortIds of the shorts in the feed, if the userId
 	 *         exists and password matches the existing password;
-	 *         NOT_FOUND - if no user exists with the provided userId
-	 *         BAD_REQUEST - otherwise.
+	 *         NOT_FOUND - if no blob exists with the provided blobId
 	 */
-	Result<User> checkUserId(String userId);
+	Result<Void> checkBlobId(String blobId);
+
 
 }

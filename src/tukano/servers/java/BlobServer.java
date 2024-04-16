@@ -1,6 +1,6 @@
 package tukano.servers.java;
 
-import java.net.URI;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,14 +10,13 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
-import jakarta.ws.rs.client.WebTarget;
-
 
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
+import tukano.api.java.Shorts;
+import tukano.api.java.Users;
 import tukano.api.java.Result.ErrorCode;
-import tukano.api.rest.RestShorts;
-import tukano.utils.Discovery;
+import tukano.clients.ClientFactory;
 
 public class BlobServer extends RestServer implements Blobs {
     protected static final int READ_TIMEOUT = 5000;
@@ -74,20 +73,23 @@ public class BlobServer extends RestServer implements Blobs {
         }
         return Result.ok(blobs.get(blobId));
     }
-    // dar fixy
-    private Result<Void> svr_checkBlobId(String blobId) {
-
-
-        if (blobId == null)
-            return Result.error(ErrorCode.BAD_REQUEST);
-        return Result.ok();
-       // return super.toJavaResult(
-         //   ssTarget.path(blobId).path(RestShorts.CHECK).request().get(), Void.class);
-    }
-
+    
     @Override
     public Result<Void> checkBlobId(String blobId) {
         return super.reTry(() -> svr_checkBlobId(blobId));
+    }
+    
+    private Result<Void> svr_checkBlobId(String blobId) {
+        if (blobId == null)
+            return Result.error(ErrorCode.BAD_REQUEST);
+
+        Users client = ClientFactory.getClient(Shorts.NAME);
+        Result<Void> check = client.checkBlobId(blobId);
+
+        if(!check.isOK())
+            return Result.error(check.error());
+
+        return Result.ok();
     }
 
 }

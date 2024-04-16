@@ -50,8 +50,10 @@ public class GrpcUsersClient implements Users {
     }
 
     @Override
-    public Result<User> checkUserId(String userId) {
+    public Result<Void> checkBlobId(String blobId) {
         // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Unimplemented method 'checkBlobId'");
     }
+
+    
 }

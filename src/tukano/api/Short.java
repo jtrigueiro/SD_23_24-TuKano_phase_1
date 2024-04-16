@@ -24,7 +24,7 @@ public class Short implements Comparable<Short>{
 	private String ownerId;
 	private String blobUrl;
 	private long timestamp;
-	private Set<String> likes;
+	private int likes;
 
 	public Short() {
 	}
@@ -34,10 +34,10 @@ public class Short implements Comparable<Short>{
 		this.ownerId = ownerId;
 		this.blobUrl = blobUrl;
 		this.timestamp = System.currentTimeMillis();
-		this.likes = new HashSet<>();
+		this.likes = 0;
 	}
 
-	public Short(String shortId, String ownerId, String blobUrl, long timestamp, Set<String> likes) {
+	public Short(String shortId, String ownerId, String blobUrl, long timestamp, int likes) {
 		this.shortId = shortId;
 		this.ownerId = ownerId;
 		this.blobUrl = blobUrl;
@@ -50,6 +50,7 @@ public class Short implements Comparable<Short>{
 		return Long.compare(this.timestamp, o2.getTimestamp());
 	}
 
+	/*
 	public void addLike(String userId) {
 		if(!likes.contains(userId))
 			likes.add(userId);
@@ -57,12 +58,12 @@ public class Short implements Comparable<Short>{
 
 	public void removeLike(String userId) {
 		likes.remove(userId);
-	}
+	}*/
 
 	@Override
 	public String toString() {
 		return "Short [shortId=" + shortId + ", ownerId=" + ownerId + ", blobUrl=" + blobUrl + ", timestamp="
-				+ timestamp + ", totalLikes=" + likes.size() + "]";
+				+ timestamp + ", totalLikes=" + likes + "]";
 	}
 
 	public Short copyOf() {
@@ -103,6 +104,7 @@ public class Short implements Comparable<Short>{
 		this.timestamp = timestamp;
 	}
 
+	/*
 	public int getTotalLikes() {
 		return likes.size();
 	}
@@ -110,5 +112,5 @@ public class Short implements Comparable<Short>{
 	public List<String> getLikes() {
 		return List.copyOf(likes);
 	}
-
+*/
 }

@@ -6,12 +6,16 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import tukano.api.Follows;
 import tukano.api.Short;
 import tukano.api.User;
 import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
 import tukano.api.java.Shorts;
+import tukano.api.java.Users;
+import tukano.api.rest.RestBlobs;
 import tukano.api.rest.RestUsers;
+import tukano.clients.ClientFactory;
 import tukano.utils.Discovery;
 
 import org.glassfish.jersey.client.ClientConfig;
@@ -23,6 +27,8 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import tukano.utils.Hibernate;
+import java.util.logging.Logger;
+
 
 public class ShortsServer extends RestServer implements Shorts {
 
@@ -32,20 +38,20 @@ public class ShortsServer extends RestServer implements Shorts {
     final Client client;
     final ClientConfig config;
 
-    private URI[] usersServer;
-    private URI[] blobServers;
-
-    private WebTarget usTarget;
-    private WebTarget[] bTargets;
-
     private static String queryShortId = "SELECT s FROM Short s WHERE s.shortId = '%s'";
     private static String queryOwnerId = "SELECT s FROM Short s WHERE s.ownerId = '%s'";
+    private static String queryFollows = "SELECT f FROM Follows f WHERE f.userId1 = '%s' AND f.userId2 = '%s'";
+    private static String queryFollowers = "SELECT f.userId1 FROM Follows f WHERE f.userId2 = '%s'";
+    private static String queryFollowing = "SELECT f.userId2 FROM Follows f WHERE f.userId1 = '%s'";
     private static Discovery discovery;
+    
+    private URI[] blobServers;
 
     private int currentBlob;
     private HashSet<String> verifiers;
+    private Logger log = Logger.getLogger(ShortsServer.class.getName());
 
-    public ShortsServer(URI serverURI) {
+    public ShortsServer() {
         this.config = new ClientConfig();
 
         config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
@@ -53,20 +59,17 @@ public class ShortsServer extends RestServer implements Shorts {
 
         this.client = ClientBuilder.newClient(config);
 
-        usersServer = discovery.knownUrisOf("users", 1);
-        blobServers = discovery.knownUrisOf("blobs", 3);
+        discovery = Discovery.getInstance();
+        blobServers = discovery.knownUrisOf("blobs", 1);
 
         currentBlob = 0;
         verifiers = new HashSet<>();
-
-        usTarget = client.target(usersServer[0]).path(RestUsers.PATH);
-        for (int i = 0; i < blobServers.length; i++)
-            bTargets[i] = client.target(blobServers[i]).path(RestUsers.PATH);
     }
 
     @Override
     public Result<Short> createShort(String userId, String password) {
-        Result<User> result = checkUserIdAndPassword(userId, password);
+        Users client = ClientFactory.getClient(Users.NAME);
+        Result<User> result = client.getUser(userId, password);
 
         if (!result.isOK())
             return Result.error(result.error());
@@ -86,9 +89,11 @@ public class ShortsServer extends RestServer implements Shorts {
             return Result.error(result.error());
 
         Short s = result.value().get(0);
-        Result<User> check = checkUserIdAndPassword(s.getOwnerId(), password);
+        
+        Users client = ClientFactory.getClient(Users.NAME);
+        Result<User> check = client.getUser(s.getOwnerId(), password);
 
-        if (check.error() != ErrorCode.OK)
+        if (!check.isOK())
             return Result.error(check.error());
 
         Hibernate.getInstance().delete(s);
@@ -99,88 +104,92 @@ public class ShortsServer extends RestServer implements Shorts {
     public Result<Short> getShort(String shortId) {
         var result = hibernateQuery(String.format(queryShortId, shortId), Short.class);
 
-        return result.error() == ErrorCode.OK ? Result.ok(result.value().get(0)) : Result.error(result.error());
+        if(!result.isOK() || result.value().isEmpty())
+            return Result.error(Result.ErrorCode.NOT_FOUND);
+
+        return Result.ok(result.value().get(0));
     }
 
     @Override
     public Result<List<String>> getShorts(String userId) {
-        Result<User> check = hasUser(userId);
+        Users client = ClientFactory.getClient(Users.NAME);
+        Result<User> result = client.getUser(userId, "");
 
-        if (hasUser(userId).error() != ErrorCode.OK)
-            return Result.error(check.error());
+        if(result.error().equals(Result.ErrorCode.NOT_FOUND))
+            return Result.error(Result.ErrorCode.NOT_FOUND);
 
-        var result = hibernateQuery(String.format(queryOwnerId, userId), String.class);
-        return result.error() == ErrorCode.OK ? Result.ok(result.value()) : Result.error(result.error());
+        var shorts = hibernateQuery(String.format(queryOwnerId, userId), String.class);
+        return Result.ok(shorts.value());
     }
 
     @Override
     public Result<Void> follow(String userId1, String userId2, boolean isFollowing, String password) {
-        var check1 = checkUserIdAndPassword(userId1, password);
+        Users client = ClientFactory.getClient(Users.NAME);
+        Result<User> check1 = client.getUser(userId1, password);
 
-        if (check1.error() != ErrorCode.OK)
+        if (!check1.isOK())
             return Result.error(check1.error());
 
-        var check2 = hasUser(userId2);
+        Result<User> check2 = client.getUser(userId1, "");
 
-        if (check2.error() != ErrorCode.OK)
-            return Result.error(check2.error());
+        if (check2.error().equals(Result.ErrorCode.NOT_FOUND))
+            return Result.error(Result.ErrorCode.NOT_FOUND);
 
-        User u1 = check1.value();
-        User u2 = check2.value();
+        Result<List<Follows>> follows = hibernateQuery(String.format(queryFollows, userId1, userId2), Follows.class);
 
-        if (isFollowing) {
-            u1.follow(userId2);
-            u2.addFollower(userId1);
-        } else {
-            u1.unfollow(userId2);
-            u2.removeFollower(userId1);
+        if(isFollowing) {
+            if(follows.isOK() && follows.value().isEmpty()) {
+                Follows f = new Follows(userId1, userId2);
+                Hibernate.getInstance().persist(f);
+            }
+        }
+        else {
+            if(follows.isOK() && !follows.value().isEmpty())
+                Hibernate.getInstance().delete(follows.value().get(0));
         }
 
-        Result<Void> result = updateUser(userId1, password, u1);
-        if (result.isOK()) {
-            result = updateUser(userId2, u2.getPwd(), u2);
-            if (result.isOK())
-                return Result.ok();
-        }
-
-        return Result.error(result.error());
+        return Result.ok();
     }
 
     @Override
     public Result<List<String>> followers(String userId, String password) {
-        var check = checkUserIdAndPassword(userId, password);
+        Users client = ClientFactory.getClient(Users.NAME);
+        Result<User> result = client.getUser(userId, password);
 
-        if (check.error() != ErrorCode.OK)
-            return Result.error(check.error());
+        if(!result.isOK())
+            return Result.error(result.error());
 
-        return Result.ok(check.value().followers());
+        Result<List<String>> follows = hibernateQuery(String.format(queryFollowers, userId), String.class);
+        return Result.ok(follows.value());
     }
 
     @Override
     public Result<Void> like(String shortId, String userId, boolean isLiked, String password) {
-        var check = checkUserIdAndPassword(userId, password);
+        Users client = ClientFactory.getClient(Users.NAME);
+        Result<User> check = client.getUser(userId, password);
 
-        if (check.error() != ErrorCode.OK)
+        if (!check.isOK())
             return Result.error(check.error());
 
-        var shortResult = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+        Result<List<Short>> check2 = hibernateQuery(String.format(queryShortId, shortId), Short.class);
 
-        if (shortResult.error() != ErrorCode.OK)
-            return Result.error(shortResult.error());
+        if (!check2.isOK())
+            return Result.error(check2.error());
 
         User u = check.value();
-        Short s = shortResult.value().get(0);
+        Short s = check2.value().get(0);
 
         if (isLiked) {
-            u.like(shortId);
-            s.addLike(userId);
+            return null;
+            //Result<List<Likes>> result = hibernateQuery(String.format(queryLikes, userId, shortId), Likes.class);
         } else {
             u.unlike(shortId);
-            s.removeLike(userId);
+            //s.removeLike(userId);
         }
 
         Hibernate.getInstance().update(s);
-        return updateUser(userId, password, u);
+        return null;
+        //return updateUser(userId, password, u);
     }
 
     @Override
@@ -190,33 +199,48 @@ public class ShortsServer extends RestServer implements Shorts {
         if (shortResult.error() != ErrorCode.OK)
             return Result.error(shortResult.error());
 
+        /*
         Result<User> check = checkUserIdAndPassword(shortResult.value().get(0).getOwnerId(), password);
         if (check.error() != ErrorCode.OK)
             return Result.error(check.error());
 
         Short s = shortResult.value().get(0);
-        return Result.ok(s.getLikes());
+        return Result.ok(s.getLikes());*/
+        return null;
     }
 
     @Override
     public Result<List<String>> getFeed(String userId, String password) {
-        var check = checkUserIdAndPassword(userId, password);
+        log.info("INSIIIIDEEEEEEEEEEEEEEEEEEEEEEEEE FEEEEEEEEEEEEEEEEEEEEEEEEEEEEED");
+        Users client = ClientFactory.getClient(Users.NAME);
+        Result<User> check = client.getUser(userId, password);
 
-        if (check.error() != ErrorCode.OK)
+        if (!check.isOK())
             return Result.error(check.error());
 
-        User u = check.value();
-        List<String> following = u.following();
+        log.info("BEFOREEEEEEEEEEE FOLLOWINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+        Result<List<String>> following = hibernateQuery(String.format(queryFollowing, userId), String.class);
         List<Short> shorts = new ArrayList<>();
 
-        for (String f : following) {
-            var result = hibernateQuery(String.format(queryOwnerId, f), Short.class);
+        log.info("BEFOREEEEEEEEEEEEEEEEEEEE OWNNEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRR");
+        Result<List<Short>> own = hibernateQuery(String.format(queryOwnerId, userId), Short.class);
+        if(own.isOK() && !own.value().isEmpty())
+        log.info("LOOOK HEEEEEEEEEEEREEEEEEEEEEEE 77777777777777777");
+            shorts.addAll(own.value());
 
-            if (result.error() != ErrorCode.OK)
-                return Result.error(result.error());
+        if(following.isOK() && !following.value().isEmpty()) {
+            for (String f : following.value()) {
+                if(f.equals(userId))
+                    continue;
+                
+                log.info("LOOOK HEEEEEEEEEEEEEEREEEEEEEEEEEE 0000000000000000000");
+                var result = hibernateQuery(String.format(queryOwnerId, f), Short.class);
 
-            for (Short s : result.value())
-                shorts.add(s);
+                if(!result.value().isEmpty()) {
+                    for (Short s : result.value())
+                        shorts.add(s);
+                }
+            }
         }
 
         shorts.sort(Comparator.naturalOrder());
@@ -228,56 +252,8 @@ public class ShortsServer extends RestServer implements Shorts {
         return Result.ok(feed);
     }
 
-    @Override
-    public Result<User> checkUserIdAndPassword(String userId, String pwd) {
-        return super.reTry(() -> svr_checkUserIdAndPassword(userId, pwd));
-    }
-
-    @Override
-    public Result<User> hasUser(String userId) {
-        return super.reTry(() -> svr_hasUser(userId));
-    }
-
-    @Override
-    public Result<Void> updateUser(String userId, String pwd, User user) {
-        return super.reTry(() -> svr_updateUser(userId, pwd, user));
-    }
-
-    private Result<Void> svr_updateUser(String userId, String pwd, User user) {
-        return (userId != null || pwd != null || user != null) ? Result.error(ErrorCode.BAD_REQUEST)
-                : super.toJavaResult(
-                        usTarget.path(userId)
-                                .queryParam(RestUsers.PWD, pwd).request()
-                                .accept(MediaType.APPLICATION_JSON)
-                                .put(Entity.entity(user, MediaType.APPLICATION_JSON)),
-                        Void.class);
-    }
-
-    private Result<User> svr_checkUserIdAndPassword(String userId, String pwd) {
-        return (userId != null || pwd != null) ? Result.error(ErrorCode.BAD_REQUEST)
-                : super.toJavaResult(
-                        usTarget.path(userId)
-                                .queryParam(RestUsers.PWD, pwd).request()
-                                .get(),
-                        User.class);
-    }
-
-    // TODO: path do pedido ta mal
-    private Result<User> svr_hasUser(String userId) {
-        return (userId != null) ? Result.error(ErrorCode.BAD_REQUEST)
-                : super.toJavaResult(
-                        usTarget.path(userId).request()
-                                .get(),
-                        User.class);
-    }
-
     private String getCurrentBlobURI() {
-        return blobServers[currentBlob++ % bTargets.length].toString();
-    }
-
-    @Override
-    public Result<Void> checkBlobId(String blobId) {
-        return verifiers.contains(blobId) ? Result.ok() : Result.error(ErrorCode.NOT_FOUND);
+        return blobServers[currentBlob++ % blobServers.length].toString();
     }
 
 }

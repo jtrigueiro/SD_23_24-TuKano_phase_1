@@ -43,9 +43,4 @@ public class RestUsersResource extends RestResource implements RestUsers {
 		return resultOrThrow(impl.searchUsers(pattern));
 	}
 
-	@Override
-	public User checkUserId(String userId) {
-		return resultOrThrow(impl.checkUserId(userId));
-	}
-
 }

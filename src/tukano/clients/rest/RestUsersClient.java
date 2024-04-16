@@ -6,7 +6,6 @@ import java.util.List;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 
-import jakarta.inject.Singleton;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -28,9 +27,6 @@ public class RestUsersClient extends RestClient implements Users {
 
 	final URI serverURI;
 	final WebTarget target;
-	// final WebTarget usTarget, ssTarget;
-	// final URI[] usersServer, shortsServer, blobServers;
-	// private static Discovery discovery;
 
 	public RestUsersClient(URI serverURI) {
 		this.serverURI = serverURI;
@@ -41,13 +37,6 @@ public class RestUsersClient extends RestClient implements Users {
 
 		this.client = ClientBuilder.newClient(config);
 
-		// discovery = Discovery.getInstance();
-		// usersServer = discovery.knownUrisOf("UsersService", 1);
-		// shortsServer = discovery.knownUrisOf("ShortsService", 1);
-		// blobServers = discovery.knownUrisOf("BlobsService", 3);
-
-		// usTarget = client.target(usersServer[0]).path(RestUsers.PATH);
-		// ssTarget = client.target(shortsServer[0]).path(RestUsers.PATH);
 		target = client.target(serverURI).path(RestUsers.PATH);
 	}
 
@@ -117,6 +106,14 @@ public class RestUsersClient extends RestClient implements Users {
 		return upload.isOK() ? Result.ok() : Result.error(upload.error());
 	}
 
+	private Result<Void> clt_checkBlobId(String blobId) {
+		return super.toJavaResult(
+				target.path(blobId)
+						.request()
+						.get(),
+				Void.class);
+	}
+
 	@Override
 	public Result<String> createUser(User user) {
 		return super.reTry(() -> clt_createUser(user));
@@ -147,10 +144,11 @@ public class RestUsersClient extends RestClient implements Users {
 		return super.reTry(() -> clt_createShort(userId, password, bytes));
 	}
 
-	// nao é usado aqui
 	@Override
-	public Result<User> checkUserId(String userId) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'checkUserId'");
+	public Result<Void> checkBlobId(String blobId) {
+		return super.reTry(() -> clt_checkBlobId(blobId));
 	}
+
+
+
 }

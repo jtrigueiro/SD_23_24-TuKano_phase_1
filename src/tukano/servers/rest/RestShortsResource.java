@@ -4,8 +4,6 @@ import java.util.List;
 
 import jakarta.inject.Singleton;
 
-import java.net.URI;
-
 import tukano.servers.java.ShortsServer;
 import tukano.api.rest.RestShorts;
 import tukano.api.java.Shorts;
@@ -16,8 +14,8 @@ public class RestShortsResource extends RestResource implements RestShorts {
 
     final Shorts impl;
 
-    public RestShortsResource(URI serverURI) {
-        this.impl = new ShortsServer(serverURI);
+    public RestShortsResource() {
+        this.impl = new ShortsServer();
     }
 
     @Override
@@ -63,11 +61,6 @@ public class RestShortsResource extends RestResource implements RestShorts {
     @Override
     public List<String> getFeed(String userId, String password) {
         return resultOrThrow(impl.getFeed(userId, password));
-    }
-
-    @Override
-    public void checkBlobId(String BlobId) {
-        resultOrThrow(impl.checkBlobId(BlobId));
     }
 
 }

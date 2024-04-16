@@ -75,8 +75,4 @@ public interface RestShorts {
 	@Path("/{" + USER_ID + "}" + FEED)
 	List<String> getFeed(@PathParam(USER_ID) String userId, @QueryParam(PWD) String password);
 
-	@GET
-	@Path("/{" + BLOB_ID + "}" + CHECK)
-	void checkBlobId(@PathParam(BLOB_ID) String BlobId);
-
 }

@@ -50,9 +50,4 @@ public interface RestUsers {
 	@Produces(MediaType.APPLICATION_JSON)
 	List<User> searchUsers(@QueryParam(QUERY) String pattern);
 
-	@GET
-	@Path("/{" + USER_ID + "}" + CHECK)
-	@Produces(MediaType.APPLICATION_JSON)
-	User checkUserId(@PathParam(USER_ID) String userId);
-
 }

@@ -1,6 +1,5 @@
 package tukano.servers.java;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,6 +160,12 @@ public class UsersServer extends RestServer implements Users {
 	public Result<Void> createShort(String userId, String password, byte[] bytes) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'createShort'");
+	}
+
+	@Override
+	public Result<Void> checkBlobId(String blobId) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'checkBlobId'");
 	}
 
 	public Result<User> checkUserId(String userId) {

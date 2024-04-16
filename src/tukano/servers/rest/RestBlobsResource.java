@@ -1,6 +1,5 @@
 package tukano.servers.rest;
 
-import java.net.URI;
 import jakarta.inject.Singleton;
 
 import tukano.servers.java.BlobServer;
@@ -12,7 +11,7 @@ public class RestBlobsResource extends RestResource implements RestBlobs {
 
     final Blobs impl;
 
-    public RestBlobsResource(URI serverURI) {
+    public RestBlobsResource() {
         this.impl = new BlobServer();
     }
 
