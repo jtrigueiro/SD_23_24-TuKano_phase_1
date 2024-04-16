@@ -68,7 +68,7 @@ public class UsersServer extends RestServer implements Users {
 		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
 
 		// Query error
-		if (result.error() != ErrorCode.OK)
+		if (!result.isOK() || result.value().isEmpty())
 			return Result.error(ErrorCode.NOT_FOUND);
 
 		User user = result.value().get(0);
@@ -122,7 +122,7 @@ public class UsersServer extends RestServer implements Users {
 		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
 
 		// Query error
-		if (result.error() != ErrorCode.OK)
+		if (!result.isOK() || result.value().isEmpty())
 			return Result.error(ErrorCode.NOT_FOUND);
 
 		User user = result.value().get(0);
@@ -142,14 +142,14 @@ public class UsersServer extends RestServer implements Users {
 		var result = hibernateQuery(queryAll, User.class);
 
 		// Query error
-		if (result.error() != ErrorCode.OK)
+		if (!result.isOK())
 			return Result.error(ErrorCode.BAD_REQUEST);
 
 		List<User> users = result.value();
 		List<User> matchingUsers = new ArrayList<>();
 
 		for (User user : users) {
-			if (user.displayName().contains(pattern))
+			if (user.getUserId().toLowerCase().contains(pattern.toLowerCase()))
 				matchingUsers.add(user);
 		}
 
@@ -172,7 +172,7 @@ public class UsersServer extends RestServer implements Users {
 		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
 
 		// Query error
-		if (result.error() != ErrorCode.OK)
+		if (!result.isOK() || result.value().isEmpty())
 			return Result.error(ErrorCode.NOT_FOUND);
 
 		User user = result.value().get(0);

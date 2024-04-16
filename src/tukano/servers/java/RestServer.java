@@ -58,9 +58,6 @@ public class RestServer {
 	protected <T> Result<List<T>> hibernateQuery(String query, Class<T> clazz) {
 		var result = Hibernate.getInstance().jpql(query, clazz);
 
-		if (result.isEmpty())
-			return Result.error(ErrorCode.NOT_FOUND);
-
 		return Result.ok(result);
 	}
 

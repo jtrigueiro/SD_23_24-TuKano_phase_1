@@ -13,7 +13,7 @@ public class RestBlobsResource extends RestResource implements RestBlobs {
     final Blobs impl;
 
     public RestBlobsResource(URI serverURI) {
-        this.impl = new BlobServer(serverURI);
+        this.impl = new BlobServer();
     }
 
     @Override

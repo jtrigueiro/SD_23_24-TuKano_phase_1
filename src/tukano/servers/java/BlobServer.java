@@ -29,24 +29,14 @@ public class BlobServer extends RestServer implements Blobs {
     final Client client;
 	final ClientConfig config;
 
-    final URI serverURI;
-    final URI[] shortsServer;
-    final WebTarget ssTarget;
 
-    public BlobServer(URI serverURI) {
-        this.serverURI = serverURI;
+    public BlobServer() {
         this.config = new ClientConfig();
 
         config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
 		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
         this.client = ClientBuilder.newClient(config);
-
-        Discovery discovery = Discovery.getInstance();
-        discovery.announce("blobs", serverURI.toString());
-
-        shortsServer = discovery.knownUrisOf("shorts", 1);
-        ssTarget = client.target(shortsServer[0]).path(RestShorts.PATH);
 
     }
 
@@ -84,13 +74,15 @@ public class BlobServer extends RestServer implements Blobs {
         }
         return Result.ok(blobs.get(blobId));
     }
-
+    // dar fixy
     private Result<Void> svr_checkBlobId(String blobId) {
+
+
         if (blobId == null)
             return Result.error(ErrorCode.BAD_REQUEST);
-
-        return super.toJavaResult(
-            ssTarget.path(blobId).path(RestShorts.CHECK).request().get(), Void.class);
+        return Result.ok();
+       // return super.toJavaResult(
+         //   ssTarget.path(blobId).path(RestShorts.CHECK).request().get(), Void.class);
     }
 
     @Override

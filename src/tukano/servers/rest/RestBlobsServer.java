@@ -24,7 +24,6 @@ public class RestBlobsServer {
 	public static void main(String[] args) {
 		try {
 			
-			String blobId = args[0];
 
 			ResourceConfig config = new ResourceConfig();
 			config.register(  RestBlobsResource.class );
