@@ -18,7 +18,7 @@ import java.util.List;
  *
  */
 @Entity
-public class Short implements Comparable<Short>{
+public class Short implements Comparable<Short> {
 	@Id
 	private String shortId;
 	private String ownerId;
@@ -47,18 +47,19 @@ public class Short implements Comparable<Short>{
 
 	@Override
 	public int compareTo(Short o2) {
-		return Long.compare(this.timestamp, o2.getTimestamp());
+		return Long.compare(o2.getTimestamp(), this.timestamp);
 	}
 
 	/*
-	public void addLike(String userId) {
-		if(!likes.contains(userId))
-			likes.add(userId);
-	}
-
-	public void removeLike(String userId) {
-		likes.remove(userId);
-	}*/
+	 * public void addLike(String userId) {
+	 * if(!likes.contains(userId))
+	 * likes.add(userId);
+	 * }
+	 * 
+	 * public void removeLike(String userId) {
+	 * likes.remove(userId);
+	 * }
+	 */
 
 	@Override
 	public String toString() {
@@ -105,12 +106,12 @@ public class Short implements Comparable<Short>{
 	}
 
 	/*
-	public int getTotalLikes() {
-		return likes.size();
-	}
-
-	public List<String> getLikes() {
-		return List.copyOf(likes);
-	}
-*/
+	 * public int getTotalLikes() {
+	 * return likes.size();
+	 * }
+	 * 
+	 * public List<String> getLikes() {
+	 * return List.copyOf(likes);
+	 * }
+	 */
 }
