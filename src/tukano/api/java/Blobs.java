@@ -58,8 +58,7 @@ public interface Blobs {
 	 * 
 	 * @param blobId the identifier to check
 	 * @return OK if the blobId is valid;
-	 *         BAD_REQUEST if the blobId is null;
-	 *         NOT_FOUND if the blobId is not valid
+	 *         FORBIDDEN if the blobId is not valid
 	 */
 	Result<Void> checkBlobId(String blobId);
 

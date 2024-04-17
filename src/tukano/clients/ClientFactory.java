@@ -3,10 +3,9 @@ package tukano.clients;
 import java.net.URI;
 
 import tukano.api.java.Users;
+import tukano.utils.Discovery;
 import tukano.clients.rest.RestUsersClient;
 import tukano.clients.grpc.GrpcUsersClient;
-
-import tukano.utils.Discovery;
 
 public class ClientFactory {
      

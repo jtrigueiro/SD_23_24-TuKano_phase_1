@@ -4,10 +4,10 @@ import java.util.List;
 
 import jakarta.inject.Singleton;
 
-import tukano.servers.java.UsersServer;
+import tukano.api.User;
 import tukano.api.java.Users;
 import tukano.api.rest.RestUsers;
-import tukano.api.User;
+import tukano.servers.java.UsersServer;
 
 @Singleton
 public class RestUsersResource extends RestResource implements RestUsers {

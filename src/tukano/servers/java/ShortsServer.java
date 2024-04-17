@@ -1,80 +1,57 @@
 package tukano.servers.java;
 
 import java.net.URI;
+
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
 
-import tukano.api.Follows;
+import tukano.api.User;
 import tukano.api.Likes;
 import tukano.api.Short;
-import tukano.api.User;
-import tukano.api.java.Result;
-import tukano.api.java.Result.ErrorCode;
-import tukano.api.java.Shorts;
+import tukano.api.Follows;
 import tukano.api.java.Users;
-import tukano.clients.ClientFactory;
+import tukano.api.rest.RestBlobs;
+import tukano.api.java.Result;
+import tukano.api.java.Shorts;
 import tukano.utils.Discovery;
-
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import tukano.utils.Hibernate;
+import tukano.clients.ClientFactory;
+import tukano.clients.rest.RestClient;
 
-public class ShortsServer extends RestServer implements Shorts {
+public class ShortsServer extends RestClient implements Shorts {
 
-    protected static final int READ_TIMEOUT = 10000;
-    protected static final int CONNECT_TIMEOUT = 10000;
-
-    final Client client;
-    final ClientConfig config;
-
-    private static String queryShortId = "SELECT s FROM Short s WHERE s.shortId = '%s'";
-    private static String queryOwnerId = "SELECT s.shortId FROM Short s WHERE s.ownerId = '%s'";
-    private static String queryShortsByOwnerId = "SELECT s FROM Short s WHERE s.ownerId = '%s'";
-    private static String queryFollows = "SELECT f FROM Follows f WHERE f.userId1 = '%s' AND f.userId2 = '%s'";
-    private static String queryFollowers = "SELECT f.userId1 FROM Follows f WHERE f.userId2 = '%s'";
-    private static String queryFollowing = "SELECT f.userId2 FROM Follows f WHERE f.userId1 = '%s'";
-    private static String queryLike = "SELECT l FROM Likes l WHERE l.userId = '%s' AND l.shortId = '%s'";
-    private static String queryLikes = "SELECT l.userId FROM Likes l WHERE l.shortId = '%s'";
-    private static String queryLikesShortId = "SELECT l FROM Likes l WHERE l.shortId = '%s'";
-    private static String queryLikesUserId = "SELECT l FROM Likes l WHERE l.userId = '%s'";
-    private static String queryDeleteFollows = "SELECT f FROM Follows f WHERE f.userId2 = '%s' OR f.userId1 = '%s'";
-    private static Discovery discovery;
+    // Queries
+    private static String shortByShortId = "SELECT s FROM Short s WHERE s.shortId = '%s'";
+    private static String shortIdByOwnerId = "SELECT s.shortId FROM Short s WHERE s.ownerId = '%s'";
+    private static String shortsByOwnerId = "SELECT s FROM Short s WHERE s.ownerId = '%s'";
+    private static String followsByUserIds = "SELECT f FROM Follows f WHERE f.userId1 = '%s' AND f.userId2 = '%s'";
+    private static String followersByUserId = "SELECT f.userId1 FROM Follows f WHERE f.userId2 = '%s'";
+    private static String followingIdByUserId = "SELECT f.userId2 FROM Follows f WHERE f.userId1 = '%s'";
+    private static String likeByUserIdAndShortId = "SELECT l FROM Likes l WHERE l.userId = '%s' AND l.shortId = '%s'";
+    private static String likesIdByShortId = "SELECT l.userId FROM Likes l WHERE l.shortId = '%s'";
+    private static String likesByShortId = "SELECT l FROM Likes l WHERE l.shortId = '%s'";
+    private static String likesByUserId = "SELECT l FROM Likes l WHERE l.userId = '%s'";
+    private static String followsByUserId = "SELECT f FROM Follows f WHERE f.userId2 = '%s' OR f.userId1 = '%s'";
 
     private URI[] blobServers;
-
     private int currentBlob;
-    private HashSet<String> verifiers;
 
     public ShortsServer() {
-        this.config = new ClientConfig();
-
-        config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
-        config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
-
-        this.client = ClientBuilder.newClient(config);
-
-        discovery = Discovery.getInstance();
-        blobServers = discovery.knownUrisOf("blobs", 1);
-
+        blobServers = Discovery.getInstance().knownUrisOf("blobs", 1);
         currentBlob = 0;
-        verifiers = new HashSet<>();
     }
 
     @Override
     public Result<Short> createShort(String userId, String password) {
         Users client = ClientFactory.getClient(Users.NAME);
-        Result<User> result = client.getUser(userId, password);
+        Result<User> uCheck = client.getUser(userId, password);
 
-        if (!result.isOK())
-            return Result.error(result.error());
+        // Check if the user exists and if the password is correct
+        if (!uCheck.isOK())
+            return Result.error(uCheck.error());
 
         Short s = new Short(userId, getCurrentBlobURI());
-        verifiers.add(s.getShortId());
 
         Hibernate.getInstance().persist(s);
         return Result.ok(s);
@@ -82,29 +59,33 @@ public class ShortsServer extends RestServer implements Shorts {
 
     @Override
     public Result<Void> deleteShort(String shortId, String password) {
-        var result = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+        List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortByShortId, shortId), Short.class);
 
-        if (result.value().isEmpty())
-            return Result.error(ErrorCode.NOT_FOUND);
+        // Check if the short exists
+        if (shorts.isEmpty())
+            return Result.error(Result.ErrorCode.NOT_FOUND);
 
-        Short s = result.value().get(0);
+        Short s = shorts.get(0);
 
         Users client = ClientFactory.getClient(Users.NAME);
-        Result<User> check = client.getUser(s.getOwnerId(), password);
+        Result<User> uCheck = client.getUser(s.getOwnerId(), password);
 
-        if (!check.isOK())
-            return Result.error(check.error());
+        // Check if the user exists and if the password is correct
+        if (!uCheck.isOK())
+            return Result.error(uCheck.error());
 
-        String URL = s.getBlobUrl().split("/blobs")[0];
+        String shortenURL = s.getBlobUrl().split(RestBlobs.PATH)[0];
 
-        Users client2 = ClientFactory.getClientURI(URI.create(URL));
-        Result<Void> delete = client2.deleteBlob(s.getShortId());
+        Users client2 = ClientFactory.getClientURI(URI.create(shortenURL));
+        Result<Void> deleteBlob = client2.deleteBlob(s.getShortId());
 
-        if (!delete.isOK() && !delete.error().equals(Result.ErrorCode.NOT_FOUND))
-            return Result.error(delete.error());
+        // Check if the blob was deleted
+        if (!deleteBlob.isOK() && !deleteBlob.error().equals(Result.ErrorCode.NOT_FOUND))
+            return Result.error(deleteBlob.error());
 
-        var likes = hibernateQuery(String.format(queryLikesShortId, s.getShortId()), Likes.class);
-        for (Likes l : likes.value())
+        List<Likes> likes = Hibernate.getInstance().jpql(String.format(likesByShortId, s.getShortId()), Likes.class);
+
+        for (Likes l : likes)
             Hibernate.getInstance().delete(l);
 
         Hibernate.getInstance().delete(s);
@@ -113,51 +94,56 @@ public class ShortsServer extends RestServer implements Shorts {
 
     @Override
     public Result<Short> getShort(String shortId) {
-        var result = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+        List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortByShortId, shortId), Short.class);
 
-        if (!result.isOK() || result.value().isEmpty())
+        // Check if the short exists
+        if (shorts.isEmpty())
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
-        return Result.ok(result.value().get(0));
+        return Result.ok(shorts.get(0));
     }
 
     @Override
     public Result<List<String>> getShorts(String userId) {
         Users client = ClientFactory.getClient(Users.NAME);
-        Result<User> result = client.getUser(userId, "WrOnGpAsSwOrD");
+        Result<User> uCheck = client.getUser(userId, "WrOnGpAsSwOrD");
 
-        if (result.error().equals(Result.ErrorCode.NOT_FOUND))
+        // Check if the user exists
+        if (uCheck.error().equals(Result.ErrorCode.NOT_FOUND))
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
-        var shorts = hibernateQuery(String.format(queryOwnerId, userId), String.class);
+        List<String> shorts = Hibernate.getInstance().jpql(String.format(shortIdByOwnerId, userId), String.class);
 
-        return Result.ok(shorts.value());
+        return Result.ok(shorts);
     }
 
     @Override
     public Result<Void> follow(String userId1, String userId2, boolean isFollowing, String password) {
         Users client = ClientFactory.getClient(Users.NAME);
-        Result<User> check1 = client.getUser(userId1, password);
+        Result<User> u1Check = client.getUser(userId1, password);
 
-        if (!check1.isOK())
-            return Result.error(check1.error());
+        // Check if the first user exists and if the password is correct
+        if (!u1Check.isOK())
+            return Result.error(u1Check.error());
 
-        Result<User> check2 = client.getUser(userId1, "WrOnGpAsSwOrD");
+        Result<User> u2Check = client.getUser(userId1, "WrOnGpAsSwOrD");
 
-        if (check2.error().equals(Result.ErrorCode.NOT_FOUND))
+        // Check if the second user exists
+        if (u2Check.error().equals(Result.ErrorCode.NOT_FOUND))
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
-        Result<List<Follows>> follows = hibernateQuery(String.format(queryFollows, userId1, userId2), Follows.class);
+        List<Follows> follows = Hibernate.getInstance().jpql(String.format(followsByUserIds, userId1, userId2), Follows.class);
 
         if (isFollowing) {
-            if (follows.value().isEmpty()) {
+            if (follows.isEmpty()) {
                 Follows f = new Follows(userId1, userId2);
                 Hibernate.getInstance().persist(f);
+
             } else
                 return Result.error(Result.ErrorCode.CONFLICT);
         } else {
-            if (!follows.value().isEmpty())
-                Hibernate.getInstance().delete(follows.value().get(0));
+            if (!follows.isEmpty())
+                Hibernate.getInstance().delete(follows.get(0));
         }
 
         return Result.ok();
@@ -166,32 +152,32 @@ public class ShortsServer extends RestServer implements Shorts {
     @Override
     public Result<List<String>> followers(String userId, String password) {
         Users client = ClientFactory.getClient(Users.NAME);
-        Result<User> result = client.getUser(userId, password);
+        Result<User> uCheck = client.getUser(userId, password);
 
-        if (!result.isOK())
-            return Result.error(result.error());
+        // Check if the user exists and if the password is correct
+        if (!uCheck.isOK())
+            return Result.error(uCheck.error());
 
-        Result<List<String>> follows = hibernateQuery(String.format(queryFollowers, userId), String.class);
-        return Result.ok(follows.value());
+        List<String> followers = Hibernate.getInstance().jpql(String.format(followersByUserId, userId), String.class);
+        return Result.ok(followers);
     }
 
     @Override
     public Result<Void> like(String shortId, String userId, boolean isLiked, String password) {
         Users client = ClientFactory.getClient(Users.NAME);
-        Result<User> check1 = client.getUser(userId, password);
+        Result<User> uCheck = client.getUser(userId, password);
 
-        if (!check1.isOK())
-            return Result.error(check1.error());
+        // Check if the user exists and if the password is correct
+        if (!uCheck.isOK())
+            return Result.error(uCheck.error());
 
-        Result<List<Short>> check2 = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+        List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortByShortId, shortId), Short.class);
+        Short s = shorts.get(0);
 
-        if (!check2.isOK())
-            return Result.error(check2.error());
+        List<Likes> likes = Hibernate.getInstance().jpql(String.format(likeByUserIdAndShortId, userId, shortId), Likes.class);
 
-        Result<List<Likes>> result = hibernateQuery(String.format(queryLike, userId, shortId), Likes.class);
-        Short s = check2.value().get(0);
-
-        if (result.value().isEmpty() == !isLiked)
+        // Check if the user has already liked the short and if the user is trying to, or vice versa
+        if (likes.isEmpty() == !isLiked)
             return Result.error(Result.ErrorCode.CONFLICT);
 
         if (isLiked) {
@@ -203,7 +189,7 @@ public class ShortsServer extends RestServer implements Shorts {
         } else {
             s.removeLike();
 
-            Hibernate.getInstance().delete(result.value().get(0));
+            Hibernate.getInstance().delete(likes.get(0));
         }
 
         Hibernate.getInstance().update(s);
@@ -212,107 +198,107 @@ public class ShortsServer extends RestServer implements Shorts {
 
     @Override
     public Result<List<String>> likes(String shortId, String password) {
-        var check1 = hibernateQuery(String.format(queryShortId, shortId), Short.class);
+        List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortByShortId, shortId), Short.class);
 
-        if (check1.value().isEmpty())
+        // Check if the short exists
+        if (shorts.isEmpty())
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
-        Short s = check1.value().get(0);
+        Short s = shorts.get(0);
 
         Users client = ClientFactory.getClient(Users.NAME);
-        Result<User> check2 = client.getUser(s.getOwnerId(), password);
+        Result<User> uCheck = client.getUser(s.getOwnerId(), password);
 
-        if (!check2.isOK())
+        // Check if the password is correct
+        if (!uCheck.isOK())
             return Result.error(Result.ErrorCode.FORBIDDEN);
 
-        var likes = hibernateQuery(String.format(queryLikes, shortId), String.class);
-        return Result.ok(likes.value());
+        List<String> likes = Hibernate.getInstance().jpql(String.format(likesIdByShortId, shortId), String.class);
+        return Result.ok(likes);
     }
 
     @Override
     public Result<List<String>> getFeed(String userId, String password) {
         Users client = ClientFactory.getClient(Users.NAME);
-        Result<User> check = client.getUser(userId, password);
+        Result<User> uCheck = client.getUser(userId, password);
 
-        if (!check.isOK())
-            return Result.error(check.error());
+        // Check if the user exists and if the password is correct
+        if (!uCheck.isOK())
+            return Result.error(uCheck.error());
 
-        Result<List<String>> following = hibernateQuery(String.format(queryFollowing, userId), String.class);
-        List<Short> shorts = new ArrayList<>();
+        List<String> following = Hibernate.getInstance().jpql(String.format(followingIdByUserId, userId), String.class);
+        List<Short> feedShorts = new ArrayList<>();
 
-        Result<List<Short>> own = hibernateQuery(String.format(queryShortsByOwnerId, userId), Short.class);
-        if (own.isOK() && !own.value().isEmpty())
-            shorts.addAll(own.value());
+        List<Short> ownShorts = Hibernate.getInstance().jpql(String.format(shortsByOwnerId, userId), Short.class);
+        if (!ownShorts.isEmpty())
+            feedShorts.addAll(ownShorts);
 
-        if (following.isOK() && !following.value().isEmpty()) {
-            for (String f : following.value()) {
-                Result<List<Short>> result = hibernateQuery(String.format(queryShortsByOwnerId, f), Short.class);
+        if (!following.isEmpty()) {
+            for (String f : following) {
+                List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortsByOwnerId, f), Short.class);
 
-                if (!result.value().isEmpty()) {
-                    for (Short s : result.value())
-                        shorts.add(s);
+                if (!shorts.isEmpty()) {
+                    for (Short s : shorts)
+                        feedShorts.add(s);
                 }
             }
-        }
+        } 
 
-        shorts.sort(Comparator.naturalOrder());
+        feedShorts.sort(Comparator.naturalOrder());
         List<String> feed = new ArrayList<>();
 
-        for (Short s : shorts)
+        for (Short s : feedShorts)
             feed.add(s.getShortId());
 
         return Result.ok(feed);
     }
 
-    private String getCurrentBlobURI() {
-        return blobServers[currentBlob++ % blobServers.length].toString();
-    }
-
     @Override
     public Result<Void> deleteUserShorts(String userId) {
-        var result = hibernateQuery(String.format(queryShortsByOwnerId, userId), Short.class);
+        List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortsByOwnerId, userId), Short.class);
 
-        for (Short s : result.value()) {
-            String URL = s.getBlobUrl().split("/blobs")[0];
+        // Deleting shorts and its likes and blobs
+        for (Short s : shorts) {
+            String shortenURL = s.getBlobUrl().split(RestBlobs.PATH)[0];
 
-            Users client = ClientFactory.getClientURI(URI.create(URL));
+            Users client = ClientFactory.getClientURI(URI.create(shortenURL));
             Result<Void> delete = client.deleteBlob(s.getShortId());
 
+            // Check if the blob was deleted
             if (!delete.isOK())
                 return Result.error(delete.error());
 
-            var likes = hibernateQuery(String.format(queryLikesShortId, s.getShortId()), Likes.class);
-            for (Likes l : likes.value())
+            List<Likes> likes = Hibernate.getInstance().jpql(String.format(likesByShortId, s.getShortId()), Likes.class);
+            for (Likes l : likes)
                 Hibernate.getInstance().delete(l);
 
             Hibernate.getInstance().delete(s);
         }
 
-        Result<List<Likes>> userLikes = hibernateQuery(String.format(queryLikesUserId, userId), Likes.class);
-        for (Likes l : userLikes.value()) {
+        List<Likes> ownLikes = Hibernate.getInstance().jpql(String.format(likesByUserId, userId), Likes.class);
+
+        // Deleting user likes
+        for (Likes l : ownLikes) {
             String shortId = l.getShortId();
 
-            Short s = hibernateQuery(String.format(queryShortId, shortId), Short.class).value().get(0);
+            Short s = Hibernate.getInstance().jpql(String.format(shortByShortId, shortId), Short.class).get(0);
             s.removeLike();
+
             Hibernate.getInstance().update(s);
             Hibernate.getInstance().delete(l);
         }
 
-        // hibernateQuery(String.format(queryDeleteFollows, userId, userId),
-        // Void.class);
+        List<Follows> follows = Hibernate.getInstance().jpql(String.format(followsByUserId, userId, userId), Follows.class);
 
-        Result<List<Follows>> userFollows = hibernateQuery(String.format(queryDeleteFollows, userId, userId),
-                Follows.class);
-        for (Follows f : userFollows.value())
+        // Deleting user following and followers
+        for (Follows f : follows)
             Hibernate.getInstance().delete(f);
 
-        /*
-         * userFollows = hibernateQuery(String.format(queryFollowing, userId),
-         * Follows.class);
-         * for (Follows f : userFollows.value())
-         * Hibernate.getInstance().delete(f);
-         */
         return Result.ok();
+    }
+
+    private String getCurrentBlobURI() {
+        return blobServers[currentBlob++ % blobServers.length].toString();
     }
 
 }

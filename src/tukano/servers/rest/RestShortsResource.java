@@ -4,10 +4,10 @@ import java.util.List;
 
 import jakarta.inject.Singleton;
 
-import tukano.servers.java.ShortsServer;
-import tukano.api.rest.RestShorts;
-import tukano.api.java.Shorts;
 import tukano.api.Short;
+import tukano.api.java.Shorts;
+import tukano.api.rest.RestShorts;
+import tukano.servers.java.ShortsServer;
 
 @Singleton
 public class RestShortsResource extends RestResource implements RestShorts {

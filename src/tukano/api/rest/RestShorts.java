@@ -28,7 +28,6 @@ public interface RestShorts {
 	String LIKES = "/likes";
 	String SHORTS = "/shorts";
 	String FOLLOWERS = "/followers";
-	String CHECK = "/check";
 	String DELETES = "/delete";
 
 	@POST

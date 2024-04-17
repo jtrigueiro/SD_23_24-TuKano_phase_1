@@ -25,8 +25,7 @@ public class Short implements Comparable<Short> {
 	private long timestamp;
 	private int likes;
 
-	public Short() {
-	}
+	public Short() {}
 
 	public Short(String ownerId, String blobUrl) {
 		this.shortId = UUID.randomUUID().toString();
@@ -66,8 +65,6 @@ public class Short implements Comparable<Short> {
 	public Short copyWith(long totLikes) {
 		return new Short(shortId, ownerId, blobUrl, timestamp, (int) totLikes);
 	}
-
-	// GETTERS AND SETTERS
 
 	public String getShortId() {
 		return shortId;

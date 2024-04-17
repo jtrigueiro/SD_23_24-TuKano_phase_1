@@ -1,17 +1,15 @@
 package tukano.servers.rest;
 
-import java.net.InetAddress;
 import java.net.URI;
-import java.util.logging.Logger;
+import java.net.InetAddress;
 
-import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
+
 
 import tukano.utils.Discovery;
 
 public class RestUsersServer {
-
-	private static Logger Log = Logger.getLogger(RestUsersServer.class.getName());
 
 	static {
 		System.setProperty("java.net.preferIPv4Stack", "true");
@@ -30,9 +28,7 @@ public class RestUsersServer {
 			
 			String ip = InetAddress.getLocalHost().getHostAddress();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
-			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);
-
-			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));			
+			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);	
 			
 			Discovery discovery = Discovery.getInstance();
 			discovery.announce(SERVICE, serverURI.toString());

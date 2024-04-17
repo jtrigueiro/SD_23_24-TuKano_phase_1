@@ -20,7 +20,6 @@ public interface RestBlobs {
  	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
 	void upload(@PathParam(BLOB_ID) String blobId, byte[] bytes);
 
-
  	@GET
  	@Path("{" + BLOB_ID +"}") 	
  	@Produces(MediaType.APPLICATION_OCTET_STREAM)

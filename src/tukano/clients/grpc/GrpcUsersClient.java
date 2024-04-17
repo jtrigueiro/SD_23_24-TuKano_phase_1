@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.List;
 
 import tukano.api.User;
-import tukano.api.Short;
 import tukano.api.java.Result;
 import tukano.api.java.Users;
 

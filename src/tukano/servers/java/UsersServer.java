@@ -3,55 +3,32 @@ package tukano.servers.java;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import tukano.api.java.Result;
-import tukano.api.java.Result.ErrorCode;
-import tukano.api.java.Shorts;
-import tukano.utils.Hibernate;
 import tukano.api.User;
 import tukano.api.java.Users;
+import tukano.api.java.Result;
+import tukano.api.java.Shorts;
+import tukano.utils.Hibernate;
 import tukano.clients.ClientFactory;
+import tukano.clients.rest.RestClient;
 
-public class UsersServer extends RestServer implements Users {
-	protected static final int READ_TIMEOUT = 10000;
-	protected static final int CONNECT_TIMEOUT = 10000;
+public class UsersServer extends RestClient implements Users {
 
-	private static String queryUserId = "SELECT u FROM User u WHERE u.userId = '%s'";
-	private static String queryAll = "SELECT u FROM User u";
+	private static String userByUserId = "SELECT u FROM User u WHERE u.userId = '%s'";
+	private static String allUsers = "SELECT u FROM User u";
 
-	final Client client;
-	final ClientConfig config;
-
-	// private URI[] shortsServer;
-	// private WebTarget ssTarget;
-
-	public UsersServer() {
-		this.config = new ClientConfig();
-
-		config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
-		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
-
-		this.client = ClientBuilder.newClient(config);
-
-		// shortsServer = discovery.knownUrisOf("shorts", 1);
-		// ssTarget = client.target(shortsServer[0]).path(RestShorts.PATH);
-	}
+	public UsersServer() {}
 
 	@Override
 	public Result<String> createUser(User user) {
 
-		// Check if user data is valid
 		if (user.userId() == null || user.pwd() == null || user.displayName() == null || user.email() == null)
-			return Result.error(ErrorCode.BAD_REQUEST);
+			return Result.error(Result.ErrorCode.BAD_REQUEST);
 
-		var result = hibernateQuery(String.format(queryUserId, user.userId()), User.class);
+		List<User> uCheck = Hibernate.getInstance().jpql(String.format(userByUserId, user.userId()), User.class);
 
-		if (result.isOK() && !result.value().isEmpty())
-			return Result.error(ErrorCode.CONFLICT);
+		// Check if the user already exists
+		if (!uCheck.isEmpty())
+			return Result.error(Result.ErrorCode.CONFLICT);
 
 		Hibernate.getInstance().persist(user);
 		return Result.ok(user.userId());
@@ -60,83 +37,77 @@ public class UsersServer extends RestServer implements Users {
 	@Override
 	public Result<User> getUser(String userId, String pwd) {
 
-		// Check if user is valid
 		if (userId == null || pwd == null)
-			return Result.error(ErrorCode.BAD_REQUEST);
+			return Result.error(Result.ErrorCode.BAD_REQUEST);
 
-		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
+		List<User> users = Hibernate.getInstance().jpql(String.format(userByUserId, userId), User.class);
 
-		// Query error
-		if (!result.isOK() || result.value().isEmpty())
-			return Result.error(ErrorCode.NOT_FOUND);
+		// Check if the user exists
+		if (users.isEmpty())
+			return Result.error(Result.ErrorCode.NOT_FOUND);
 
-		User user = result.value().get(0);
+		User user = users.get(0);
 
 		// Check if the password is correct
-		if (!user.getPwd().equals(pwd))
-			return Result.error(ErrorCode.FORBIDDEN);
+		if (!user.pwd().equals(pwd))
+			return Result.error(Result.ErrorCode.FORBIDDEN);
 
 		return Result.ok(user);
 	}
 
 	@Override
-	public Result<User> updateUser(String userId, String pwd, User user) {
+	public Result<User> updateUser(String userId, String pwd, User newUser) {
 
-		// Check if user is valid
-		if (userId == null || pwd == null || user == null)
-			return Result.error(ErrorCode.BAD_REQUEST);
+		if (userId == null || pwd == null || newUser == null)
+			return Result.error(Result.ErrorCode.BAD_REQUEST);
 
-		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
+		List<User> users = Hibernate.getInstance().jpql(String.format(userByUserId, userId), User.class);
 
-		if (!result.isOK() || result.value().isEmpty())
-			return Result.error(ErrorCode.NOT_FOUND);
+		// Check if the user exists
+		if (users.isEmpty())
+			return Result.error(Result.ErrorCode.NOT_FOUND);
 
-		User dbUser = result.value().get(0);
+		User user = users.get(0);
 
 		// Check if the password is correct
-		if (!dbUser.getPwd().equals(pwd))
-			return Result.error(ErrorCode.FORBIDDEN);
+		if (!user.getPwd().equals(pwd))
+			return Result.error(Result.ErrorCode.FORBIDDEN);
 
-		if (user.getUserId() != null && !user.getUserId().equals(userId))
-			return Result.error(ErrorCode.BAD_REQUEST);
-		if (user.getPwd() != null)
-			dbUser.setPwd(user.getPwd());
-		if (user.getEmail() != null)
-			dbUser.setEmail(user.getEmail());
-		if (user.getDisplayName() != null)
-			dbUser.setDisplayName(user.getDisplayName());
+		// Check if the user is trying to change the userId
+		if (newUser.getUserId() != null && !newUser.getUserId().equals(userId))
+			return Result.error(Result.ErrorCode.BAD_REQUEST);
+		
+		user.update(newUser);
 
-		// Update the user
-		Hibernate.getInstance().update(dbUser);
-		return Result.ok(dbUser);
+		Hibernate.getInstance().update(user);
+		return Result.ok(user);
 	}
 
 	@Override
 	public Result<User> deleteUser(String userId, String pwd) {
 
-		// Check if user is valid
 		if (userId == null || pwd == null)
-			return Result.error(ErrorCode.BAD_REQUEST);
+			return Result.error(Result.ErrorCode.BAD_REQUEST);
 
-		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
+		List<User> users = Hibernate.getInstance().jpql(String.format(userByUserId, userId), User.class);
 
-		// Query error
-		if (!result.isOK() || result.value().isEmpty())
-			return Result.error(ErrorCode.NOT_FOUND);
+		// Check if the user exists
+		if (users.isEmpty())
+			return Result.error(Result.ErrorCode.NOT_FOUND);
 
-		User user = result.value().get(0);
+		User user = users.get(0);
 
 		// Check if the password is correct
 		if (!user.getPwd().equals(pwd))
-			return Result.error(ErrorCode.FORBIDDEN);
+			return Result.error(Result.ErrorCode.FORBIDDEN);
 
+		// Delete the user's shorts
 		Users client = ClientFactory.getClient(Shorts.NAME);
-		Result<Void> result2 = client.deleteUserShorts(userId);
+		Result<Void> deleteShorts = client.deleteUserShorts(userId);
 
-		if (!result2.isOK())
-			return Result.error(result2.error());
+		if (!deleteShorts.isOK())
+			return Result.error(deleteShorts.error());
 
-		// Delete the user
 		Hibernate.getInstance().delete(user);
 		return Result.ok(user);
 	}
@@ -144,13 +115,7 @@ public class UsersServer extends RestServer implements Users {
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
 
-		var result = hibernateQuery(queryAll, User.class);
-
-		// Query error
-		if (!result.isOK())
-			return Result.error(ErrorCode.BAD_REQUEST);
-
-		List<User> users = result.value();
+		List<User> users = Hibernate.getInstance().jpql(allUsers, User.class);
 		List<User> matchingUsers = new ArrayList<>();
 
 		for (User user : users) {
@@ -161,46 +126,30 @@ public class UsersServer extends RestServer implements Users {
 		return Result.ok(matchingUsers);
 	}
 
-	// nao é usado aqui
+	// ------------------- Unimplemented methods -------------------
+
 	@Override
 	public Result<Void> createShort(String userId, String password, byte[] bytes) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'createShort'");
+		throw new UnsupportedOperationException("Unimplemented method 'createShort' in UsersServer.java");
 	}
 
 	@Override
 	public Result<String> checkBlobId(String blobId) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'checkBlobId'");
-	}
-
-	public Result<User> checkUserId(String userId) {
-
-		// Check if user is valid
-		if (userId == null)
-			return Result.error(ErrorCode.BAD_REQUEST);
-
-		var result = hibernateQuery(String.format(queryUserId, userId), User.class);
-
-		// Query error
-		if (!result.isOK() || result.value().isEmpty())
-			return Result.error(ErrorCode.NOT_FOUND);
-
-		User user = result.value().get(0);
-
-		return Result.ok(user);
+		throw new UnsupportedOperationException("Unimplemented method 'checkBlobId' in UsersServer.java");
 	}
 
 	@Override
 	public Result<Void> deleteUserShorts(String userId) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'deleteUserShorts'");
+		throw new UnsupportedOperationException("Unimplemented method 'deleteUserShorts' in UsersServer.java");
 	}
 
 	@Override
 	public Result<Void> deleteBlob(String blobId) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'deleteBlob'");
+		throw new UnsupportedOperationException("Unimplemented method 'deleteBlob' in UsersServer.java");
 	}
 
 }

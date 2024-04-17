@@ -131,7 +131,7 @@ public interface Shorts {
 	 * 
 	 * @param userId the user that owns the shorts to be deleted
 	 * @return (OK,void),
-	 *         NOT_FOUND if the user does not exist
+	 *         NOT_FOUND if the blobId of a short owned by the user does not match an existing blob
 	 */
 	Result<Void> deleteUserShorts(String userId);
 }

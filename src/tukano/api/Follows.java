@@ -3,6 +3,13 @@ package tukano.api;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+/**
+ * Represents a Follows relationship between two users.
+ * 
+ * A follows has an unique concatenation of the two userIds that are part of the relationship;
+ * Comprises of two userIds, userId1 and userId2, where user with userId1 follows user with userId2.
+ *
+ */
 @Entity
 public class Follows {
     

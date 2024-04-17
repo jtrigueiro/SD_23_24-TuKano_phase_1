@@ -1,43 +1,30 @@
 package tukano.clients.rest;
 
 import java.net.URI;
+
 import java.util.List;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
-import tukano.api.java.Result;
+import jakarta.ws.rs.core.GenericType;
+
 import tukano.api.User;
-import tukano.api.java.Users;
-import tukano.api.rest.RestBlobs;
-import tukano.api.rest.RestShorts;
-import tukano.api.rest.RestUsers;
 import tukano.api.Short;
+import tukano.api.java.Users;
+import tukano.api.java.Result;
+import tukano.api.rest.RestBlobs;
+import tukano.api.rest.RestUsers;
+import tukano.api.rest.RestShorts;
 
 public class RestUsersClient extends RestClient implements Users {
-	protected static final int READ_TIMEOUT = 10000;
-	protected static final int CONNECT_TIMEOUT = 10000;
-
-	final Client client;
-	final ClientConfig config;
 
 	final URI serverURI;
 	private WebTarget target;
 
 	public RestUsersClient(URI serverURI) {
+		super();
 		this.serverURI = serverURI;
-		this.config = new ClientConfig();
-
-		config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
-		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
-
-		this.client = ClientBuilder.newClient(config);
 	}
 
 	private Result<String> clt_createUser(User user) {

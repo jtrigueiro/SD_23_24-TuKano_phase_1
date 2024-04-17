@@ -1,10 +1,7 @@
 package tukano.api;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.List;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
 
 @Entity
 public class User {
@@ -14,51 +11,20 @@ public class User {
 	private String displayName;
 	private String pwd;
 	private String email;
-	private Set<String> following;
-	private Set<String> followers;
-	private Set<String> likedShorts;
 
-	public User() {
-	}
+	public User() {}
 
 	public User(String userId, String pwd, String email, String displayName) {
 		this.pwd = pwd;
 		this.email = email;
 		this.userId = userId;
 		this.displayName = displayName;
-		this.following = new HashSet<>();
-		this.followers = new HashSet<>();
-		this.likedShorts = new HashSet<>();
 	}
-
-	public void follow(String userId) {
-		if(!following.contains(userId))
-			following.add(userId);
-	}
-
-	public void unfollow(String userId) {
-		if(following.contains(userId))
-			following.remove(userId);
-	}
-
-	public void addFollower(String userId) {
-		if(!followers.contains(userId))
-			followers.add(userId);
-	}
-
-	public void removeFollower(String userId) {
-		if(followers.contains(userId))
-			followers.remove(userId);
-	}
-
-	public void like(String shortId) {
-		if(!likedShorts.contains(shortId))
-			likedShorts.add(shortId);
-	}
-
-	public void unlike(String shortId) {
-		if(likedShorts.contains(shortId))
-			likedShorts.remove(shortId);
+	
+	public void update(User user) {
+		this.pwd = user.pwd != null ? user.pwd : this.pwd;
+		this.email = user.email != null ? user.email : this.email;
+		this.displayName = user.displayName != null ? user.displayName : this.displayName;
 	}
 
 	public String getUserId() {
@@ -107,14 +73,6 @@ public class User {
 
 	public String displayName() {
 		return displayName;
-	}
-
-	public List<String> following() {
-		return List.copyOf(following);
-	}
-
-	public List<String> followers() {
-		return List.copyOf(followers);
 	}
 
 	@Override
