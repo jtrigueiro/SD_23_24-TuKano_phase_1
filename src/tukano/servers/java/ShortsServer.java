@@ -26,8 +26,8 @@ import tukano.utils.Hibernate;
 
 public class ShortsServer extends RestServer implements Shorts {
 
-    protected static final int READ_TIMEOUT = 5000;
-    protected static final int CONNECT_TIMEOUT = 5000;
+    protected static final int READ_TIMEOUT = 10000;
+    protected static final int CONNECT_TIMEOUT = 10000;
 
     final Client client;
     final ClientConfig config;
@@ -100,13 +100,12 @@ public class ShortsServer extends RestServer implements Shorts {
         Users client2 = ClientFactory.getClientURI(URI.create(URL));
         Result<Void> delete = client2.deleteBlob(s.getShortId());
 
-        if (!delete.isOK())
+        if (!delete.isOK() && !delete.error().equals(Result.ErrorCode.NOT_FOUND))
             return Result.error(delete.error());
 
         var likes = hibernateQuery(String.format(queryLikesShortId, s.getShortId()), Likes.class);
         for (Likes l : likes.value())
             Hibernate.getInstance().delete(l);
-
 
         Hibernate.getInstance().delete(s);
         return Result.ok();
@@ -183,7 +182,7 @@ public class ShortsServer extends RestServer implements Shorts {
 
         if (!check1.isOK())
             return Result.error(check1.error());
-            
+
         Result<List<Short>> check2 = hibernateQuery(String.format(queryShortId, shortId), Short.class);
 
         if (!check2.isOK())
@@ -191,8 +190,8 @@ public class ShortsServer extends RestServer implements Shorts {
 
         Result<List<Likes>> result = hibernateQuery(String.format(queryLike, userId, shortId), Likes.class);
         Short s = check2.value().get(0);
-        
-        if(result.value().isEmpty() == !isLiked)
+
+        if (result.value().isEmpty() == !isLiked)
             return Result.error(Result.ErrorCode.CONFLICT);
 
         if (isLiked) {
@@ -203,7 +202,7 @@ public class ShortsServer extends RestServer implements Shorts {
 
         } else {
             s.removeLike();
-        
+
             Hibernate.getInstance().delete(result.value().get(0));
         }
 
@@ -292,25 +291,27 @@ public class ShortsServer extends RestServer implements Shorts {
         Result<List<Likes>> userLikes = hibernateQuery(String.format(queryLikesUserId, userId), Likes.class);
         for (Likes l : userLikes.value()) {
             String shortId = l.getShortId();
-            
+
             Short s = hibernateQuery(String.format(queryShortId, shortId), Short.class).value().get(0);
             s.removeLike();
             Hibernate.getInstance().update(s);
             Hibernate.getInstance().delete(l);
         }
 
-        //hibernateQuery(String.format(queryDeleteFollows, userId, userId), Void.class);
+        // hibernateQuery(String.format(queryDeleteFollows, userId, userId),
+        // Void.class);
 
-        
-        Result<List<Follows>> userFollows = hibernateQuery(String.format(queryDeleteFollows,userId, userId), Follows.class);
+        Result<List<Follows>> userFollows = hibernateQuery(String.format(queryDeleteFollows, userId, userId),
+                Follows.class);
         for (Follows f : userFollows.value())
             Hibernate.getInstance().delete(f);
 
         /*
-        userFollows = hibernateQuery(String.format(queryFollowing, userId), Follows.class);
-        for (Follows f : userFollows.value())
-            Hibernate.getInstance().delete(f);
-        */
+         * userFollows = hibernateQuery(String.format(queryFollowing, userId),
+         * Follows.class);
+         * for (Follows f : userFollows.value())
+         * Hibernate.getInstance().delete(f);
+         */
         return Result.ok();
     }
 

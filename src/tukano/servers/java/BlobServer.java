@@ -20,21 +20,20 @@ import tukano.api.java.Result.ErrorCode;
 import tukano.clients.ClientFactory;
 
 public class BlobServer extends RestServer implements Blobs {
-    protected static final int READ_TIMEOUT = 5000;
-	protected static final int CONNECT_TIMEOUT = 5000;
+    protected static final int READ_TIMEOUT = 10000;
+    protected static final int CONNECT_TIMEOUT = 10000;
 
     private final Map<String, byte[]> blobs = new HashMap<>();
     private static Logger Log = Logger.getLogger(BlobServer.class.getName());
 
     final Client client;
-	final ClientConfig config;
-
+    final ClientConfig config;
 
     public BlobServer() {
         this.config = new ClientConfig();
 
         config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
-		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
+        config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
         this.client = ClientBuilder.newClient(config);
 
@@ -74,13 +73,13 @@ public class BlobServer extends RestServer implements Blobs {
         }
         return Result.ok(blobs.get(blobId));
     }
-    
+
     @Override
     public Result<Void> checkBlobId(String blobId) {
         Users client = ClientFactory.getClient(Shorts.NAME);
         Result<String> check = client.checkBlobId(blobId);
 
-        if(!check.isOK())
+        if (!check.isOK())
             return Result.error(check.error());
 
         return Result.ok();

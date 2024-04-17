@@ -17,8 +17,8 @@ import tukano.api.java.Users;
 import tukano.clients.ClientFactory;
 
 public class UsersServer extends RestServer implements Users {
-	protected static final int READ_TIMEOUT = 5000;
-	protected static final int CONNECT_TIMEOUT = 5000;
+	protected static final int READ_TIMEOUT = 10000;
+	protected static final int CONNECT_TIMEOUT = 10000;
 
 	private static String queryUserId = "SELECT u FROM User u WHERE u.userId = '%s'";
 	private static String queryAll = "SELECT u FROM User u";
