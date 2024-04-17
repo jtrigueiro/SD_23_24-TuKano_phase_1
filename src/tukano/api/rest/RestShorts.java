@@ -3,9 +3,9 @@ package tukano.api.rest;
 import java.util.List;
 
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -29,6 +29,7 @@ public interface RestShorts {
 	String SHORTS = "/shorts";
 	String FOLLOWERS = "/followers";
 	String CHECK = "/check";
+	String DELETES = "/delete";
 
 	@POST
 	@Path("/{" + USER_ID + "}")
@@ -74,5 +75,9 @@ public interface RestShorts {
 	@GET
 	@Path("/{" + USER_ID + "}" + FEED)
 	List<String> getFeed(@PathParam(USER_ID) String userId, @QueryParam(PWD) String password);
+
+	@DELETE
+	@Path("/{" + USER_ID + "}" + DELETES)
+	void deleteUserShorts(@PathParam(USER_ID) String userId);
 
 }

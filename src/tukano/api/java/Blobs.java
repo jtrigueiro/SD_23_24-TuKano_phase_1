@@ -62,4 +62,13 @@ public interface Blobs {
 	 *         NOT_FOUND if the blobId is not valid
 	 */
 	Result<Void> checkBlobId(String blobId);
+
+	/**
+	 * Deletes a blob resource.
+	 * 
+	 * @param blobId the identifier of the blob to delete
+	 * @return OK if the blob was deleted;
+	 *         NOT_FOUND if the blobId does not match an existing blob
+	 */
+	Result<Void> delete(String blobId);
 }

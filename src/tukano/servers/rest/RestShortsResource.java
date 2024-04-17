@@ -63,4 +63,9 @@ public class RestShortsResource extends RestResource implements RestShorts {
         return resultOrThrow(impl.getFeed(userId, password));
     }
 
+    @Override
+    public void deleteUserShorts(String userId) {
+        resultOrThrow(impl.deleteUserShorts(userId));
+    }
+
 }

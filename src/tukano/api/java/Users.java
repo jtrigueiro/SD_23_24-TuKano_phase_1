@@ -96,7 +96,18 @@ public interface Users {
 	 *         exists and password matches the existing password;
 	 *         NOT_FOUND - if no blob exists with the provided blobId
 	 */
-	Result<Void> checkBlobId(String blobId);
+	Result<String> checkBlobId(String blobId);
 
 
+	/**
+	 * Deletes the users shorts
+	 * 
+	 * @param userId   - the user
+	 * @param password - the password of the user
+	 * @return (OK, ) if the users shorts were deleted
+	 *         NOT_FOUND if the user does not exists
+	 */
+	Result<Void> deleteUserShorts(String userId);
+
+	Result<Void> deleteBlob(String blobId);
 }

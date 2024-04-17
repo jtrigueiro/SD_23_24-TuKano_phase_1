@@ -126,4 +126,12 @@ public interface Shorts {
 	 */
 	Result<List<String>> getFeed(String userId, String password);
 
+	/**
+	 * Deletes all the shorts of a given user
+	 * 
+	 * @param userId the user that owns the shorts to be deleted
+	 * @return (OK,void),
+	 *         NOT_FOUND if the user does not exist
+	 */
+	Result<Void> deleteUserShorts(String userId);
 }

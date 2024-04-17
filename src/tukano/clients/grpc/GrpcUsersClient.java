@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import tukano.api.User;
+import tukano.api.Short;
 import tukano.api.java.Result;
 import tukano.api.java.Users;
 
@@ -50,9 +51,21 @@ public class GrpcUsersClient implements Users {
     }
 
     @Override
-    public Result<Void> checkBlobId(String blobId) {
+    public Result<String> checkBlobId(String blobId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'checkBlobId'");
+    }
+
+    @Override
+    public Result<Void> deleteUserShorts(String userId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteUserShorts'");
+    }
+
+    @Override
+    public Result<Void> deleteBlob(String blobId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteBlob'");
     }
 
     

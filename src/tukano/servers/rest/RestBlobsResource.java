@@ -25,4 +25,9 @@ public class RestBlobsResource extends RestResource implements RestBlobs {
         return resultOrThrow(impl.download(blobId));
     }
 
+    @Override
+    public void delete(String blobId) {
+        resultOrThrow(impl.delete(blobId));
+    }
+
 }

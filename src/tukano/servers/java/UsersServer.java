@@ -7,14 +7,14 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 
 import jakarta.ws.rs.client.Client;
-//import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.client.ClientBuilder;
 import tukano.api.java.Result;
 import tukano.api.java.Result.ErrorCode;
-//import tukano.api.rest.RestShorts;
+import tukano.api.java.Shorts;
 import tukano.utils.Hibernate;
 import tukano.api.User;
 import tukano.api.java.Users;
+import tukano.clients.ClientFactory;
 
 public class UsersServer extends RestServer implements Users {
 	protected static final int READ_TIMEOUT = 5000;
@@ -130,6 +130,12 @@ public class UsersServer extends RestServer implements Users {
 		if (!user.getPwd().equals(pwd))
 			return Result.error(ErrorCode.FORBIDDEN);
 
+		Users client = ClientFactory.getClient(Shorts.NAME);
+		Result<Void> result2 = client.deleteUserShorts(userId);
+
+		if (!result2.isOK())
+			return Result.error(result2.error());
+
 		// Delete the user
 		Hibernate.getInstance().delete(user);
 		return Result.ok(user);
@@ -163,7 +169,7 @@ public class UsersServer extends RestServer implements Users {
 	}
 
 	@Override
-	public Result<Void> checkBlobId(String blobId) {
+	public Result<String> checkBlobId(String blobId) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'checkBlobId'");
 	}
@@ -183,6 +189,18 @@ public class UsersServer extends RestServer implements Users {
 		User user = result.value().get(0);
 
 		return Result.ok(user);
+	}
+
+	@Override
+	public Result<Void> deleteUserShorts(String userId) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'deleteUserShorts'");
+	}
+
+	@Override
+	public Result<Void> deleteBlob(String blobId) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'deleteBlob'");
 	}
 
 }

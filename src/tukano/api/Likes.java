@@ -7,9 +7,14 @@ import jakarta.persistence.Id;
 public class Likes {
     
     @Id
+    private String concat;
     private String userId, shortId;
 
+    public Likes() {
+    }
+
     public Likes(String userId, String shortId) {
+        this.concat = userId + shortId;
         this.userId = userId;
         this.shortId = shortId;
     }

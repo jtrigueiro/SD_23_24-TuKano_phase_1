@@ -2,10 +2,9 @@ package tukano.api;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import java.util.Set;
+import tukano.api.rest.RestBlobs;
+
 import java.util.UUID;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Represents a Short video uploaded by an user.
@@ -32,7 +31,7 @@ public class Short implements Comparable<Short> {
 	public Short(String ownerId, String blobUrl) {
 		this.shortId = UUID.randomUUID().toString();
 		this.ownerId = ownerId;
-		this.blobUrl = blobUrl;
+		this.blobUrl = String.format(blobUrl + "%s/%s", RestBlobs.PATH, shortId);
 		this.timestamp = System.currentTimeMillis();
 		this.likes = 0;
 	}
@@ -49,17 +48,14 @@ public class Short implements Comparable<Short> {
 	public int compareTo(Short o2) {
 		return Long.compare(o2.getTimestamp(), this.timestamp);
 	}
-
-	/*
-	 * public void addLike(String userId) {
-	 * if(!likes.contains(userId))
-	 * likes.add(userId);
-	 * }
-	 * 
-	 * public void removeLike(String userId) {
-	 * likes.remove(userId);
-	 * }
-	 */
+	
+	public void addLike() {
+		likes++;
+	}
+	
+	public void removeLike() {
+		likes--;
+	}
 
 	@Override
 	public String toString() {
@@ -67,8 +63,8 @@ public class Short implements Comparable<Short> {
 				+ timestamp + ", totalLikes=" + likes + "]";
 	}
 
-	public Short copyOf() {
-		return new Short(shortId, ownerId, blobUrl, timestamp, likes);
+	public Short copyWith(long totLikes) {
+		return new Short(shortId, ownerId, blobUrl, timestamp, (int) totLikes);
 	}
 
 	// GETTERS AND SETTERS
@@ -105,13 +101,8 @@ public class Short implements Comparable<Short> {
 		this.timestamp = timestamp;
 	}
 
-	/*
-	 * public int getTotalLikes() {
-	 * return likes.size();
-	 * }
-	 * 
-	 * public List<String> getLikes() {
-	 * return List.copyOf(likes);
-	 * }
-	 */
+	public int getTotalLikes() {
+		return likes;
+	}
+
 }

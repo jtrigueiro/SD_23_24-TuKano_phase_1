@@ -1,6 +1,6 @@
 package tukano.servers.java;
 
-import java.io.OutputStream;
+//import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +11,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 
+import tukano.api.Short;
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
@@ -76,19 +77,25 @@ public class BlobServer extends RestServer implements Blobs {
     
     @Override
     public Result<Void> checkBlobId(String blobId) {
-        return super.reTry(() -> svr_checkBlobId(blobId));
-    }
-    
-    private Result<Void> svr_checkBlobId(String blobId) {
-        if (blobId == null)
-            return Result.error(ErrorCode.BAD_REQUEST);
-
         Users client = ClientFactory.getClient(Shorts.NAME);
-        Result<Void> check = client.checkBlobId(blobId);
+        Result<String> check = client.checkBlobId(blobId);
 
         if(!check.isOK())
             return Result.error(check.error());
 
+        return Result.ok();
+    }
+
+    @Override
+    public Result<Void> delete(String blobId) {
+        Log.info("BlobServer: deleting blob " + blobId);
+
+        if (!blobs.containsKey(blobId)) {
+            Log.info("BlobServer: blob id does not exist.");
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+        blobs.remove(blobId);
         return Result.ok();
     }
 

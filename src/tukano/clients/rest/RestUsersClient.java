@@ -15,18 +15,20 @@ import jakarta.ws.rs.core.MediaType;
 import tukano.api.java.Result;
 import tukano.api.User;
 import tukano.api.java.Users;
+import tukano.api.rest.RestBlobs;
+import tukano.api.rest.RestShorts;
 import tukano.api.rest.RestUsers;
 import tukano.api.Short;
 
 public class RestUsersClient extends RestClient implements Users {
-	protected static final int READ_TIMEOUT = 5000;
-	protected static final int CONNECT_TIMEOUT = 5000;
+	protected static final int READ_TIMEOUT = 10000;
+	protected static final int CONNECT_TIMEOUT = 10000;
 
 	final Client client;
 	final ClientConfig config;
 
 	final URI serverURI;
-	final WebTarget target;
+	private WebTarget target;
 
 	public RestUsersClient(URI serverURI) {
 		this.serverURI = serverURI;
@@ -36,11 +38,11 @@ public class RestUsersClient extends RestClient implements Users {
 		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
 		this.client = ClientBuilder.newClient(config);
-
-		target = client.target(serverURI).path(RestUsers.PATH);
 	}
 
 	private Result<String> clt_createUser(User user) {
+		target = client.target(serverURI).path(RestUsers.PATH);
+
 		return super.toJavaResult(
 				target.request()
 						.accept(MediaType.APPLICATION_JSON)
@@ -49,6 +51,8 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<User> clt_getUser(String userId, String pwd) {
+		target = client.target(serverURI).path(RestUsers.PATH);
+
 		return super.toJavaResult(
 				target.path(userId)
 						.queryParam(RestUsers.PWD, pwd).request()
@@ -58,6 +62,8 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<User> clt_updateUser(String userId, String password, User user) {
+		target = client.target(serverURI).path(RestUsers.PATH);
+
 		return super.toJavaResult(
 				target.path(userId)
 						.queryParam(RestUsers.PWD, password)
@@ -67,6 +73,8 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<User> clt_deleteUser(String userId, String password) {
+		target = client.target(serverURI).path(RestUsers.PATH);
+		
 		return super.toJavaResult(
 				target.path(userId)
 						.queryParam(RestUsers.PWD, password)
@@ -76,6 +84,8 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<List<User>> clt_searchUsers(String pattern) {
+		target = client.target(serverURI).path(RestUsers.PATH);
+
 		return super.toJavaResult(
 				target.queryParam(RestUsers.QUERY, pattern)
 						.request(MediaType.APPLICATION_JSON)
@@ -85,6 +95,8 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<Void> clt_createShort(String userId, String password, byte[] bytes) {
+		target = client.target(serverURI).path(RestShorts.PATH);
+
 		Result<Short> result = super.toJavaResult(
 				target.path(userId)
 						.queryParam(RestUsers.PWD, password)
@@ -96,9 +108,9 @@ public class RestUsersClient extends RestClient implements Users {
 
 		Short s = result.value();
 		URI blobURI = URI.create(s.getBlobUrl());
-		WebTarget target = client.target(blobURI);
+		WebTarget blob = client.target(blobURI);
 
-		Result<Void> upload = super.toJavaResult(target
+		Result<Void> upload = super.toJavaResult(blob
 				.path(s.getShortId())
 				.request().accept(MediaType.APPLICATION_OCTET_STREAM)
 				.post(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM)), Void.class);
@@ -106,11 +118,35 @@ public class RestUsersClient extends RestClient implements Users {
 		return upload.isOK() ? Result.ok() : Result.error(upload.error());
 	}
 
-	private Result<Void> clt_checkBlobId(String blobId) {
+	private Result<String> clt_checkBlobId(String blobId) {
+		target = client.target(serverURI).path(RestShorts.PATH);
+
 		return super.toJavaResult(
 				target.path(blobId)
 						.request()
+						.accept(MediaType.APPLICATION_JSON)
 						.get(),
+				String.class);
+	}
+
+	private Result<Void> clt_deleteUserShorts(String userId) {
+		target = client.target(serverURI).path(RestShorts.PATH);
+
+		return super.toJavaResult(
+				target.path(userId)
+						.path(RestShorts.DELETES)
+						.request()
+						.delete(),
+				Void.class);
+	}
+
+	private Result<Void> clt_deleteBlob(String blobId) {
+		target = client.target(serverURI).path(RestBlobs.PATH);
+
+		return super.toJavaResult(
+				target.path(blobId)
+						.request()
+						.delete(),
 				Void.class);
 	}
 
@@ -145,10 +181,18 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	@Override
-	public Result<Void> checkBlobId(String blobId) {
+	public Result<String> checkBlobId(String blobId) {
 		return super.reTry(() -> clt_checkBlobId(blobId));
 	}
 
+	@Override
+	public Result<Void> deleteUserShorts(String userId) {
+		return super.reTry(() -> clt_deleteUserShorts(userId));
+	}
 
+	@Override
+	public Result<Void> deleteBlob(String blobId) {
+		return super.reTry(() -> clt_deleteBlob(blobId));
+	}
 
 }
