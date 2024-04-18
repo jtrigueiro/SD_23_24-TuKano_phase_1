@@ -18,6 +18,10 @@ service Users {
 
 	rpc checkBlobId( CheckBlobIdArgs) returns (CheckBlobIdResult){}
 
+	rpc deleteUserShorts( DeleteUserShortsArgs) returns (){}
+
+	rpc deleteBlob( DeleteBlobArgs) returns (){}
+
 }
 
 message GrpcUser {
@@ -75,3 +79,12 @@ message CheckBlobIdArgs {
 message CheckBlobIdResult {
 	string blobId = 1;
 }
+
+message DeleteUserShortsArgs {
+	string userId = 1;
+}
+
+message DeleteBlobArgs {
+	string blobId = 1;
+}
+

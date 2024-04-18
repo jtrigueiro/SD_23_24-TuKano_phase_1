@@ -107,14 +107,22 @@ public class GrpcUsersClient implements Users {
 
     @Override
     public Result<Void> deleteUserShorts(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUserShorts'");
+        toJavaResult(() -> {
+            var res = stub.deleteUserShorts(DeleteUserShortsArgs.newBuilder()
+                    .setUserId(userId)
+                    .build());
+        });
+        return null;
     }
 
     @Override
     public Result<Void> deleteBlob(String blobId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteBlob'");
+        toJavaResult(() -> {
+            var res = stub.deleteBlob(DeleteBlobArgs.newBuilder()
+                    .setBlobId(blobId)
+                    .build());
+        });
+        return null;
     }
 
     static <T> Result<T> toJavaResult(Supplier<T> func) {
