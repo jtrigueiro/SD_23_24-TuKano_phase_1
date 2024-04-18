@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 option java_package = "tukano.impl.grpc.generated_java";
 option java_outer_classname = "UsersProtoBuf";
 
@@ -18,9 +20,9 @@ service Users {
 
 	rpc checkBlobId( CheckBlobIdArgs) returns (CheckBlobIdResult){}
 
-	rpc deleteUserShorts( DeleteUserShortsArgs) returns (){}
+	rpc deleteUserShorts( DeleteUserShortsArgs) returns ( google.protobuf.Empty){}
 
-	rpc deleteBlob( DeleteBlobArgs) returns (){}
+	rpc deleteBlob( DeleteBlobArgs) returns ( google.protobuf.Empty){}
 
 }
 

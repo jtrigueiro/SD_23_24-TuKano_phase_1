@@ -201,6 +201,68 @@ public final class UsersGrpc {
     return getCheckBlobIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs,
+      com.google.protobuf.Empty> getDeleteUserShortsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "deleteUserShorts",
+      requestType = tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.class,
+      responseType = com.google.protobuf.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs,
+      com.google.protobuf.Empty> getDeleteUserShortsMethod() {
+    io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs, com.google.protobuf.Empty> getDeleteUserShortsMethod;
+    if ((getDeleteUserShortsMethod = UsersGrpc.getDeleteUserShortsMethod) == null) {
+      synchronized (UsersGrpc.class) {
+        if ((getDeleteUserShortsMethod = UsersGrpc.getDeleteUserShortsMethod) == null) {
+          UsersGrpc.getDeleteUserShortsMethod = getDeleteUserShortsMethod =
+              io.grpc.MethodDescriptor.<tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs, com.google.protobuf.Empty>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "deleteUserShorts"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setSchemaDescriptor(new UsersMethodDescriptorSupplier("deleteUserShorts"))
+              .build();
+        }
+      }
+    }
+    return getDeleteUserShortsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs,
+      com.google.protobuf.Empty> getDeleteBlobMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "deleteBlob",
+      requestType = tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.class,
+      responseType = com.google.protobuf.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs,
+      com.google.protobuf.Empty> getDeleteBlobMethod() {
+    io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs, com.google.protobuf.Empty> getDeleteBlobMethod;
+    if ((getDeleteBlobMethod = UsersGrpc.getDeleteBlobMethod) == null) {
+      synchronized (UsersGrpc.class) {
+        if ((getDeleteBlobMethod = UsersGrpc.getDeleteBlobMethod) == null) {
+          UsersGrpc.getDeleteBlobMethod = getDeleteBlobMethod =
+              io.grpc.MethodDescriptor.<tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs, com.google.protobuf.Empty>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "deleteBlob"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setSchemaDescriptor(new UsersMethodDescriptorSupplier("deleteBlob"))
+              .build();
+        }
+      }
+    }
+    return getDeleteBlobMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -290,6 +352,20 @@ public final class UsersGrpc {
         io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.UsersProtoBuf.CheckBlobIdResult> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCheckBlobIdMethod(), responseObserver);
     }
+
+    /**
+     */
+    default void deleteUserShorts(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteUserShortsMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void deleteBlob(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteBlobMethod(), responseObserver);
+    }
   }
 
   /**
@@ -366,6 +442,22 @@ public final class UsersGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getCheckBlobIdMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void deleteUserShorts(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDeleteUserShortsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void deleteBlob(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDeleteBlobMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -426,6 +518,20 @@ public final class UsersGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getCheckBlobIdMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public com.google.protobuf.Empty deleteUserShorts(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteUserShortsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public com.google.protobuf.Empty deleteBlob(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteBlobMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -483,6 +589,22 @@ public final class UsersGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getCheckBlobIdMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> deleteUserShorts(
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDeleteUserShortsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> deleteBlob(
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDeleteBlobMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_USER = 0;
@@ -491,6 +613,8 @@ public final class UsersGrpc {
   private static final int METHODID_DELETE_USER = 3;
   private static final int METHODID_SEARCH_USERS = 4;
   private static final int METHODID_CHECK_BLOB_ID = 5;
+  private static final int METHODID_DELETE_USER_SHORTS = 6;
+  private static final int METHODID_DELETE_BLOB = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -532,6 +656,14 @@ public final class UsersGrpc {
         case METHODID_CHECK_BLOB_ID:
           serviceImpl.checkBlobId((tukano.impl.grpc.generated_java.UsersProtoBuf.CheckBlobIdArgs) request,
               (io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.UsersProtoBuf.CheckBlobIdResult>) responseObserver);
+          break;
+        case METHODID_DELETE_USER_SHORTS:
+          serviceImpl.deleteUserShorts((tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs) request,
+              (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
+          break;
+        case METHODID_DELETE_BLOB:
+          serviceImpl.deleteBlob((tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs) request,
+              (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -593,6 +725,20 @@ public final class UsersGrpc {
               tukano.impl.grpc.generated_java.UsersProtoBuf.CheckBlobIdArgs,
               tukano.impl.grpc.generated_java.UsersProtoBuf.CheckBlobIdResult>(
                 service, METHODID_CHECK_BLOB_ID)))
+        .addMethod(
+          getDeleteUserShortsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs,
+              com.google.protobuf.Empty>(
+                service, METHODID_DELETE_USER_SHORTS)))
+        .addMethod(
+          getDeleteBlobMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs,
+              com.google.protobuf.Empty>(
+                service, METHODID_DELETE_BLOB)))
         .build();
   }
 
@@ -647,6 +793,8 @@ public final class UsersGrpc {
               .addMethod(getDeleteUserMethod())
               .addMethod(getSearchUsersMethod())
               .addMethod(getCheckBlobIdMethod())
+              .addMethod(getDeleteUserShortsMethod())
+              .addMethod(getDeleteBlobMethod())
               .build();
         }
       }

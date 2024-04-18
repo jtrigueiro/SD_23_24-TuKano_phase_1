@@ -8291,6 +8291,1146 @@ public final class UsersProtoBuf {
 
   }
 
+  public interface DeleteUserShortsArgsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:DeleteUserShortsArgs)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string userId = 1;</code>
+     * @return The userId.
+     */
+    java.lang.String getUserId();
+    /**
+     * <code>string userId = 1;</code>
+     * @return The bytes for userId.
+     */
+    com.google.protobuf.ByteString
+        getUserIdBytes();
+  }
+  /**
+   * Protobuf type {@code DeleteUserShortsArgs}
+   */
+  public static final class DeleteUserShortsArgs extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:DeleteUserShortsArgs)
+      DeleteUserShortsArgsOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use DeleteUserShortsArgs.newBuilder() to construct.
+    private DeleteUserShortsArgs(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private DeleteUserShortsArgs() {
+      userId_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new DeleteUserShortsArgs();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DeleteUserShortsArgs(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              userId_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteUserShortsArgs_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteUserShortsArgs_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.class, tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.Builder.class);
+    }
+
+    public static final int USERID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object userId_;
+    /**
+     * <code>string userId = 1;</code>
+     * @return The userId.
+     */
+    @java.lang.Override
+    public java.lang.String getUserId() {
+      java.lang.Object ref = userId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        userId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string userId = 1;</code>
+     * @return The bytes for userId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUserIdBytes() {
+      java.lang.Object ref = userId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        userId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(userId_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, userId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(userId_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, userId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs)) {
+        return super.equals(obj);
+      }
+      tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs other = (tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs) obj;
+
+      if (!getUserId()
+          .equals(other.getUserId())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + USERID_FIELD_NUMBER;
+      hash = (53 * hash) + getUserId().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code DeleteUserShortsArgs}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:DeleteUserShortsArgs)
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgsOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteUserShortsArgs_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteUserShortsArgs_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.class, tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.Builder.class);
+      }
+
+      // Construct using tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        userId_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteUserShortsArgs_descriptor;
+      }
+
+      @java.lang.Override
+      public tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs getDefaultInstanceForType() {
+        return tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs build() {
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs buildPartial() {
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs result = new tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs(this);
+        result.userId_ = userId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs) {
+          return mergeFrom((tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs other) {
+        if (other == tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs.getDefaultInstance()) return this;
+        if (!other.getUserId().isEmpty()) {
+          userId_ = other.userId_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object userId_ = "";
+      /**
+       * <code>string userId = 1;</code>
+       * @return The userId.
+       */
+      public java.lang.String getUserId() {
+        java.lang.Object ref = userId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          userId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string userId = 1;</code>
+       * @return The bytes for userId.
+       */
+      public com.google.protobuf.ByteString
+          getUserIdBytes() {
+        java.lang.Object ref = userId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          userId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string userId = 1;</code>
+       * @param value The userId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUserId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        userId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string userId = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUserId() {
+        
+        userId_ = getDefaultInstance().getUserId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string userId = 1;</code>
+       * @param value The bytes for userId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUserIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        userId_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:DeleteUserShortsArgs)
+    }
+
+    // @@protoc_insertion_point(class_scope:DeleteUserShortsArgs)
+    private static final tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs();
+    }
+
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DeleteUserShortsArgs>
+        PARSER = new com.google.protobuf.AbstractParser<DeleteUserShortsArgs>() {
+      @java.lang.Override
+      public DeleteUserShortsArgs parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new DeleteUserShortsArgs(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<DeleteUserShortsArgs> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DeleteUserShortsArgs> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserShortsArgs getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface DeleteBlobArgsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:DeleteBlobArgs)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string blobId = 1;</code>
+     * @return The blobId.
+     */
+    java.lang.String getBlobId();
+    /**
+     * <code>string blobId = 1;</code>
+     * @return The bytes for blobId.
+     */
+    com.google.protobuf.ByteString
+        getBlobIdBytes();
+  }
+  /**
+   * Protobuf type {@code DeleteBlobArgs}
+   */
+  public static final class DeleteBlobArgs extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:DeleteBlobArgs)
+      DeleteBlobArgsOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use DeleteBlobArgs.newBuilder() to construct.
+    private DeleteBlobArgs(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private DeleteBlobArgs() {
+      blobId_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new DeleteBlobArgs();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DeleteBlobArgs(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              blobId_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteBlobArgs_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteBlobArgs_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.class, tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.Builder.class);
+    }
+
+    public static final int BLOBID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object blobId_;
+    /**
+     * <code>string blobId = 1;</code>
+     * @return The blobId.
+     */
+    @java.lang.Override
+    public java.lang.String getBlobId() {
+      java.lang.Object ref = blobId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        blobId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string blobId = 1;</code>
+     * @return The bytes for blobId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getBlobIdBytes() {
+      java.lang.Object ref = blobId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        blobId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(blobId_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, blobId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(blobId_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, blobId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs)) {
+        return super.equals(obj);
+      }
+      tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs other = (tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs) obj;
+
+      if (!getBlobId()
+          .equals(other.getBlobId())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + BLOBID_FIELD_NUMBER;
+      hash = (53 * hash) + getBlobId().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code DeleteBlobArgs}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:DeleteBlobArgs)
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgsOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteBlobArgs_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteBlobArgs_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.class, tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.Builder.class);
+      }
+
+      // Construct using tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        blobId_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return tukano.impl.grpc.generated_java.UsersProtoBuf.internal_static_DeleteBlobArgs_descriptor;
+      }
+
+      @java.lang.Override
+      public tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs getDefaultInstanceForType() {
+        return tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs build() {
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs buildPartial() {
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs result = new tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs(this);
+        result.blobId_ = blobId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs) {
+          return mergeFrom((tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs other) {
+        if (other == tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs.getDefaultInstance()) return this;
+        if (!other.getBlobId().isEmpty()) {
+          blobId_ = other.blobId_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object blobId_ = "";
+      /**
+       * <code>string blobId = 1;</code>
+       * @return The blobId.
+       */
+      public java.lang.String getBlobId() {
+        java.lang.Object ref = blobId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          blobId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string blobId = 1;</code>
+       * @return The bytes for blobId.
+       */
+      public com.google.protobuf.ByteString
+          getBlobIdBytes() {
+        java.lang.Object ref = blobId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          blobId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string blobId = 1;</code>
+       * @param value The blobId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlobId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        blobId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string blobId = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBlobId() {
+        
+        blobId_ = getDefaultInstance().getBlobId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string blobId = 1;</code>
+       * @param value The bytes for blobId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlobIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        blobId_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:DeleteBlobArgs)
+    }
+
+    // @@protoc_insertion_point(class_scope:DeleteBlobArgs)
+    private static final tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs();
+    }
+
+    public static tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DeleteBlobArgs>
+        PARSER = new com.google.protobuf.AbstractParser<DeleteBlobArgs>() {
+      @java.lang.Override
+      public DeleteBlobArgs parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new DeleteBlobArgs(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<DeleteBlobArgs> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DeleteBlobArgs> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteBlobArgs getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_GrpcUser_descriptor;
   private static final 
@@ -8351,6 +9491,16 @@ public final class UsersProtoBuf {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_CheckBlobIdResult_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_DeleteUserShortsArgs_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DeleteUserShortsArgs_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_DeleteBlobArgs_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DeleteBlobArgs_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -8360,37 +9510,43 @@ public final class UsersProtoBuf {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\037src/tukano/api/grpc/Users.proto\"\226\001\n\010Gr" +
-      "pcUser\022\023\n\006userId\030\001 \001(\tH\000\210\001\001\022\022\n\005email\030\002 \001" +
-      "(\tH\001\210\001\001\022\030\n\013displayName\030\003 \001(\tH\002\210\001\001\022\025\n\010pas" +
-      "sword\030\004 \001(\tH\003\210\001\001B\t\n\007_userIdB\010\n\006_emailB\016\n" +
-      "\014_displayNameB\013\n\t_password\")\n\016CreateUser" +
-      "Args\022\027\n\004user\030\001 \001(\0132\t.GrpcUser\"\"\n\020CreateU" +
-      "serResult\022\016\n\006userId\030\001 \001(\t\"/\n\013GetUserArgs" +
-      "\022\016\n\006userId\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"(\n\rGe" +
-      "tUserResult\022\027\n\004user\030\001 \001(\0132\t.GrpcUser\"K\n\016" +
-      "UpdateUserArgs\022\016\n\006userId\030\001 \001(\t\022\020\n\010passwo" +
-      "rd\030\002 \001(\t\022\027\n\004user\030\003 \001(\0132\t.GrpcUser\"+\n\020Upd" +
-      "ateUserResult\022\027\n\004user\030\001 \001(\0132\t.GrpcUser\"2" +
-      "\n\016DeleteUserArgs\022\016\n\006userId\030\001 \001(\t\022\020\n\010pass" +
-      "word\030\002 \001(\t\"+\n\020DeleteUserResult\022\027\n\004user\030\001" +
-      " \001(\0132\t.GrpcUser\"!\n\016SearchUserArgs\022\017\n\007pat" +
-      "tern\030\001 \001(\t\"!\n\017CheckBlobIdArgs\022\016\n\006blobId\030" +
-      "\001 \001(\t\"#\n\021CheckBlobIdResult\022\016\n\006blobId\030\001 \001" +
-      "(\t2\264\002\n\005Users\0222\n\ncreateUser\022\017.CreateUserA" +
-      "rgs\032\021.CreateUserResult\"\000\022)\n\007getUser\022\014.Ge" +
-      "tUserArgs\032\016.GetUserResult\"\000\0222\n\nupdateUse" +
-      "r\022\017.UpdateUserArgs\032\021.UpdateUserResult\"\000\022" +
-      "2\n\ndeleteUser\022\017.DeleteUserArgs\032\021.DeleteU" +
-      "serResult\"\000\022-\n\013searchUsers\022\017.SearchUserA" +
-      "rgs\032\t.GrpcUser\"\0000\001\0225\n\013checkBlobId\022\020.Chec" +
-      "kBlobIdArgs\032\022.CheckBlobIdResult\"\000B0\n\037tuk" +
-      "ano.impl.grpc.generated_javaB\rUsersProto" +
-      "Bufb\006proto3"
+      "\n\037src/tukano/api/grpc/Users.proto\032\033googl" +
+      "e/protobuf/empty.proto\"\226\001\n\010GrpcUser\022\023\n\006u" +
+      "serId\030\001 \001(\tH\000\210\001\001\022\022\n\005email\030\002 \001(\tH\001\210\001\001\022\030\n\013" +
+      "displayName\030\003 \001(\tH\002\210\001\001\022\025\n\010password\030\004 \001(\t" +
+      "H\003\210\001\001B\t\n\007_userIdB\010\n\006_emailB\016\n\014_displayNa" +
+      "meB\013\n\t_password\")\n\016CreateUserArgs\022\027\n\004use" +
+      "r\030\001 \001(\0132\t.GrpcUser\"\"\n\020CreateUserResult\022\016" +
+      "\n\006userId\030\001 \001(\t\"/\n\013GetUserArgs\022\016\n\006userId\030" +
+      "\001 \001(\t\022\020\n\010password\030\002 \001(\t\"(\n\rGetUserResult" +
+      "\022\027\n\004user\030\001 \001(\0132\t.GrpcUser\"K\n\016UpdateUserA" +
+      "rgs\022\016\n\006userId\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\022\027\n" +
+      "\004user\030\003 \001(\0132\t.GrpcUser\"+\n\020UpdateUserResu" +
+      "lt\022\027\n\004user\030\001 \001(\0132\t.GrpcUser\"2\n\016DeleteUse" +
+      "rArgs\022\016\n\006userId\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"" +
+      "+\n\020DeleteUserResult\022\027\n\004user\030\001 \001(\0132\t.Grpc" +
+      "User\"!\n\016SearchUserArgs\022\017\n\007pattern\030\001 \001(\t\"" +
+      "!\n\017CheckBlobIdArgs\022\016\n\006blobId\030\001 \001(\t\"#\n\021Ch" +
+      "eckBlobIdResult\022\016\n\006blobId\030\001 \001(\t\"&\n\024Delet" +
+      "eUserShortsArgs\022\016\n\006userId\030\001 \001(\t\" \n\016Delet" +
+      "eBlobArgs\022\016\n\006blobId\030\001 \001(\t2\262\003\n\005Users\0222\n\nc" +
+      "reateUser\022\017.CreateUserArgs\032\021.CreateUserR" +
+      "esult\"\000\022)\n\007getUser\022\014.GetUserArgs\032\016.GetUs" +
+      "erResult\"\000\0222\n\nupdateUser\022\017.UpdateUserArg" +
+      "s\032\021.UpdateUserResult\"\000\0222\n\ndeleteUser\022\017.D" +
+      "eleteUserArgs\032\021.DeleteUserResult\"\000\022-\n\013se" +
+      "archUsers\022\017.SearchUserArgs\032\t.GrpcUser\"\0000" +
+      "\001\0225\n\013checkBlobId\022\020.CheckBlobIdArgs\032\022.Che" +
+      "ckBlobIdResult\"\000\022C\n\020deleteUserShorts\022\025.D" +
+      "eleteUserShortsArgs\032\026.google.protobuf.Em" +
+      "pty\"\000\0227\n\ndeleteBlob\022\017.DeleteBlobArgs\032\026.g" +
+      "oogle.protobuf.Empty\"\000B0\n\037tukano.impl.gr" +
+      "pc.generated_javaB\rUsersProtoBufb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          com.google.protobuf.EmptyProto.getDescriptor(),
         });
     internal_static_GrpcUser_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -8464,6 +9620,19 @@ public final class UsersProtoBuf {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_CheckBlobIdResult_descriptor,
         new java.lang.String[] { "BlobId", });
+    internal_static_DeleteUserShortsArgs_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_DeleteUserShortsArgs_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_DeleteUserShortsArgs_descriptor,
+        new java.lang.String[] { "UserId", });
+    internal_static_DeleteBlobArgs_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_DeleteBlobArgs_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_DeleteBlobArgs_descriptor,
+        new java.lang.String[] { "BlobId", });
+    com.google.protobuf.EmptyProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)
