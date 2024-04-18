@@ -16,6 +16,8 @@ service Users {
 
 	rpc searchUsers( SearchUserArgs) returns (stream GrpcUser){}
 
+	rpc checkBlobId( CheckBlobIdArgs) returns (CheckBlobIdResult){}
+
 }
 
 message GrpcUser {
@@ -64,4 +66,12 @@ message DeleteUserResult {
 
 message SearchUserArgs {
 	string pattern = 1;
+}
+
+message CheckBlobIdArgs {
+	string blobId = 1;
+}
+
+message CheckBlobIdResult {
+	String blobId = 1;
 }
