@@ -1,6 +1,7 @@
 package tukano.servers.grpc;
 
-import static tukano.impl.grpc.common.DataModelAdaptor.GrpcUser_to_User;
+import static tukano.impl.grpc.common.DataModelAdaptor.*;
+import javax.naming.directory.SearchResult;
 
 import io.grpc.BindableService;
 import io.grpc.ServerServiceDefinition;
@@ -8,16 +9,7 @@ import io.grpc.stub.StreamObserver;
 import tukano.api.java.Result;
 import tukano.api.java.Users;
 import tukano.impl.grpc.generated_java.UsersGrpc;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.CreateUserArgs;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.CreateUserResult;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserArgs;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserResult;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.GetUserArgs;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.GetUserResult;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.GrpcUser;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.SearchUserArgs;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.UpdateUserArgs;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.UpdateUserResult;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.*;
 import tukano.servers.java.UsersServer;
 
 public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableService {
@@ -42,22 +34,48 @@ public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableServ
 
     @Override
     public void getUser(GetUserArgs request, StreamObserver<GetUserResult> responseObserver) {
-        throw new RuntimeException("Not Implemented...");
+        var res = impl.getUser(request.getUserId(), request.getPassword());
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(GetUserResult.newBuilder().setUser(User_to_GrpcUser(res.value())).build());
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
     public void updateUser(UpdateUserArgs request, StreamObserver<UpdateUserResult> responseObserver) {
-        throw new RuntimeException("Not Implemented...");
+        var res = impl.updateUser(request.getUserId(), request.getPassword(), GrpcUser_to_User(request.getUser()));
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(UpdateUserResult.newBuilder().setUser(User_to_GrpcUser(res.value())).build());
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
     public void deleteUser(DeleteUserArgs request, StreamObserver<DeleteUserResult> responseObserver) {
-        throw new RuntimeException("Not Implemented...");
+        var res = impl.deleteUser(request.getUserId(), request.getPassword());
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(DeleteUserResult.newBuilder().setUser(User_to_GrpcUser(res.value())).build());
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
     public void searchUsers(SearchUserArgs request, StreamObserver<GrpcUser> responseObserver) {
-        throw new RuntimeException("Not Implemented...");
+        var res = impl.searchUsers(request.getPattern());
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver// tem que ser um loop para meter a lista de users???
+                    .onNext(SearchUsersResult.newBuilder().setUser(UserList_to_GrpcUserList(res.value()))
+                            .build());
+            responseObserver.onCompleted();
+        }
     }
 
     protected static Throwable errorCodeToStatus(Result.ErrorCode error) {

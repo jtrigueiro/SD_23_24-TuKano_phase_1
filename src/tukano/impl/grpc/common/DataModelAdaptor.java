@@ -1,5 +1,8 @@
 package tukano.impl.grpc.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tukano.api.User;
 import tukano.impl.grpc.generated_java.UsersProtoBuf.GrpcUser;
 
@@ -22,4 +25,10 @@ public class DataModelAdaptor {
 				.build();
 	}
 
+	public static List<GrpcUser> UserList_to_GrpcUserList(List<User> from) {
+		List<GrpcUser> grpcUsersList = new ArrayList<>();
+		for (User u : from)
+			grpcUsersList.add(User_to_GrpcUser(u));
+		return grpcUsersList;
+	}
 }
