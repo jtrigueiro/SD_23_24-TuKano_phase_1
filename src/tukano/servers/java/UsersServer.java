@@ -9,14 +9,14 @@ import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.utils.Hibernate;
 import tukano.clients.ClientFactory;
-import tukano.clients.rest.RestClient;
 
-public class UsersServer extends RestClient implements Users {
+public class UsersServer implements Users {
 
 	private static String userByUserId = "SELECT u FROM User u WHERE u.userId = '%s'";
 	private static String allUsers = "SELECT u FROM User u";
 
-	public UsersServer() {}
+	public UsersServer() {
+	}
 
 	@Override
 	public Result<String> createUser(User user) {
@@ -76,7 +76,7 @@ public class UsersServer extends RestClient implements Users {
 		// Check if the user is trying to change the userId
 		if (newUser.getUserId() != null && !newUser.getUserId().equals(userId))
 			return Result.error(Result.ErrorCode.BAD_REQUEST);
-		
+
 		user.update(newUser);
 
 		Hibernate.getInstance().update(user);

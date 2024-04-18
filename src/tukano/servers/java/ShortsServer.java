@@ -17,9 +17,8 @@ import tukano.api.java.Shorts;
 import tukano.utils.Discovery;
 import tukano.utils.Hibernate;
 import tukano.clients.ClientFactory;
-import tukano.clients.rest.RestClient;
 
-public class ShortsServer extends RestClient implements Shorts {
+public class ShortsServer implements Shorts {
 
     // Queries
     private static String shortByShortId = "SELECT s FROM Short s WHERE s.shortId = '%s'";
@@ -35,11 +34,12 @@ public class ShortsServer extends RestClient implements Shorts {
     private static String followsByUserId = "SELECT f FROM Follows f WHERE f.userId2 = '%s' OR f.userId1 = '%s'";
 
     private URI[] blobServers;
-    private int currentBlob;
+    // To distribute the shorts among the blobs servers
+    private int[] blobsShortsCounterMem;
 
     public ShortsServer() {
         blobServers = Discovery.getInstance().knownUrisOf("blobs", 1);
-        currentBlob = 0;
+        blobsShortsCounterMem = new int[blobServers.length];
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ShortsServer extends RestClient implements Shorts {
         if (!uCheck.isOK())
             return Result.error(uCheck.error());
 
-        Short s = new Short(userId, getCurrentBlobURI());
+        Short s = new Short(userId, incrementBlobCounterAndGetURI());
 
         Hibernate.getInstance().persist(s);
         return Result.ok(s);
@@ -87,6 +87,8 @@ public class ShortsServer extends RestClient implements Shorts {
 
         for (Likes l : likes)
             Hibernate.getInstance().delete(l);
+
+        decrementBlobCounter(shortenURL);
 
         Hibernate.getInstance().delete(s);
         return Result.ok();
@@ -132,7 +134,8 @@ public class ShortsServer extends RestClient implements Shorts {
         if (u2Check.error().equals(Result.ErrorCode.NOT_FOUND))
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
-        List<Follows> follows = Hibernate.getInstance().jpql(String.format(followsByUserIds, userId1, userId2), Follows.class);
+        List<Follows> follows = Hibernate.getInstance().jpql(String.format(followsByUserIds, userId1, userId2),
+                Follows.class);
 
         if (isFollowing) {
             if (follows.isEmpty()) {
@@ -174,9 +177,11 @@ public class ShortsServer extends RestClient implements Shorts {
         List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortByShortId, shortId), Short.class);
         Short s = shorts.get(0);
 
-        List<Likes> likes = Hibernate.getInstance().jpql(String.format(likeByUserIdAndShortId, userId, shortId), Likes.class);
+        List<Likes> likes = Hibernate.getInstance().jpql(String.format(likeByUserIdAndShortId, userId, shortId),
+                Likes.class);
 
-        // Check if the user has already liked the short and if the user is trying to, or vice versa
+        // Check if the user has already liked the short and if the user is trying to,
+        // or vice versa
         if (likes.isEmpty() == !isLiked)
             return Result.error(Result.ErrorCode.CONFLICT);
 
@@ -242,7 +247,7 @@ public class ShortsServer extends RestClient implements Shorts {
                         feedShorts.add(s);
                 }
             }
-        } 
+        }
 
         feedShorts.sort(Comparator.naturalOrder());
         List<String> feed = new ArrayList<>();
@@ -268,10 +273,12 @@ public class ShortsServer extends RestClient implements Shorts {
             if (!delete.isOK())
                 return Result.error(delete.error());
 
-            List<Likes> likes = Hibernate.getInstance().jpql(String.format(likesByShortId, s.getShortId()), Likes.class);
+            List<Likes> likes = Hibernate.getInstance().jpql(String.format(likesByShortId, s.getShortId()),
+                    Likes.class);
             for (Likes l : likes)
                 Hibernate.getInstance().delete(l);
 
+            decrementBlobCounter(shortenURL);
             Hibernate.getInstance().delete(s);
         }
 
@@ -288,7 +295,8 @@ public class ShortsServer extends RestClient implements Shorts {
             Hibernate.getInstance().delete(l);
         }
 
-        List<Follows> follows = Hibernate.getInstance().jpql(String.format(followsByUserId, userId, userId), Follows.class);
+        List<Follows> follows = Hibernate.getInstance().jpql(String.format(followsByUserId, userId, userId),
+                Follows.class);
 
         // Deleting user following and followers
         for (Follows f : follows)
@@ -297,8 +305,27 @@ public class ShortsServer extends RestClient implements Shorts {
         return Result.ok();
     }
 
-    private String getCurrentBlobURI() {
-        return blobServers[currentBlob++ % blobServers.length].toString();
+    private void decrementBlobCounter(String URI) {
+        for (int i = 0; i < blobServers.length; i++) {
+            if (blobServers[i].toString().equals(URI)) {
+                blobsShortsCounterMem[i]--;
+                break;
+            }
+        }
+    }
+
+    private String incrementBlobCounterAndGetURI() {
+        int minimum = Integer.MAX_VALUE;
+        int minimumPos = 0;
+        for (int i = 0; i < blobsShortsCounterMem.length; i++) {
+            if (blobsShortsCounterMem[i] < minimum) {
+                minimum = blobsShortsCounterMem[i];
+                minimumPos = i;
+            }
+        }
+
+        blobsShortsCounterMem[minimumPos]++;
+        return blobServers[minimumPos].toString();
     }
 
 }

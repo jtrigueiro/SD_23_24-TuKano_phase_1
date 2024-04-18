@@ -8,9 +8,8 @@ import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.api.java.Users;
 import tukano.clients.ClientFactory;
-import tukano.clients.rest.RestClient;
 
-public class BlobServer extends RestClient implements Blobs {
+public class BlobServer implements Blobs {
 
     private final Map<String, byte[]> blobs;
 
