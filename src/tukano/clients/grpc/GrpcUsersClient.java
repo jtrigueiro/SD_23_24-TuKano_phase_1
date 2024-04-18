@@ -98,10 +98,9 @@ public class GrpcUsersClient implements Users {
     @Override
     public Result<String> checkBlobId(String blobId) {
         return toJavaResult(() -> {
-            var res = stub.checkBlobId(CheckBlobId.newBuilder()
+            var res = stub.checkBlobId(CheckBlobIdArgs.newBuilder()
                     .setBlobId(blobId)
                     .build());
-
             return res.getBlobId();
         });
     }

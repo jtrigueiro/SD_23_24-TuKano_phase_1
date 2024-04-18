@@ -73,5 +73,5 @@ message CheckBlobIdArgs {
 }
 
 message CheckBlobIdResult {
-	String blobId = 1;
+	string blobId = 1;
 }
