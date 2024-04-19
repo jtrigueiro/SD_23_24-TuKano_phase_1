@@ -1,16 +1,28 @@
 package tukano.servers.grpc;
 
-import static tukano.impl.grpc.common.DataModelAdaptor.*;
-import javax.naming.directory.SearchResult;
-
 import io.grpc.BindableService;
 import io.grpc.ServerServiceDefinition;
 import io.grpc.stub.StreamObserver;
+
+import tukano.api.User;
 import tukano.api.java.Result;
 import tukano.api.java.Users;
-import tukano.impl.grpc.generated_java.UsersGrpc;
-import tukano.impl.grpc.generated_java.UsersProtoBuf.*;
 import tukano.servers.java.UsersServer;
+
+import tukano.impl.grpc.generated_java.UsersGrpc;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.GrpcUser;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.CreateUserArgs;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.CreateUserResult;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserArgs;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.DeleteUserResult;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.GetUserArgs;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.GetUserResult;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.SearchUserArgs;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.UpdateUserArgs;
+import tukano.impl.grpc.generated_java.UsersProtoBuf.UpdateUserResult;
+
+import static tukano.impl.grpc.common.DataModelAdaptor.GrpcUser_to_User;
+import static tukano.impl.grpc.common.DataModelAdaptor.User_to_GrpcUser;
 
 public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableService {
 
@@ -71,9 +83,8 @@ public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableServ
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-            responseObserver// tem que ser um loop para meter a lista de users???
-                    .onNext(SearchUsersResult.newBuilder().setUser(UserList_to_GrpcUserList(res.value()))
-                            .build());
+            for(User user : res.value())
+                responseObserver.onNext(User_to_GrpcUser(user));
             responseObserver.onCompleted();
         }
     }

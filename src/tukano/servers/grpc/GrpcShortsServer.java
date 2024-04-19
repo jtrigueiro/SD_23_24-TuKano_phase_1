@@ -1,26 +1,26 @@
 package tukano.servers.grpc;
 
 import java.net.InetAddress;
-import java.util.logging.Logger;
 
 import io.grpc.ServerBuilder;
-import tukano.api.java.Users;
+
+import tukano.utils.Discovery;
 
 public class GrpcShortsServer {
     public static final int PORT = 8080;
-
-    private static final String GRPC_CTX = "/gprc";
-    private static final String SERVER_BASE_URI = "grpc://%s:%s%s";
-
-    private static Logger Log = Logger.getLogger(GrpcShortsServer.class.getName());
+    public static final String SERVICE = "shorts";
+    private static final String SERVER_URI_FMT = "http://%s:%s/grpc";
 
     public static void main(String[] args) throws Exception {
 
         var stub = new GrpcShortsServerStub();
         var server = ServerBuilder.forPort(PORT).addService(stub).build();
-        var serverURI = String.format(SERVER_BASE_URI, InetAddress.getLocalHost().getHostAddress(), PORT, GRPC_CTX);
+        var serverURI = String.format(SERVER_URI_FMT, InetAddress.getLocalHost().getHostAddress(), PORT);
 
-        Log.info(String.format("%s gRPC Server ready @ %s\n", Users.NAME, serverURI));
-        server.start().awaitTermination();
+        server.start();
+        server.awaitTermination();
+
+        Discovery discovery = Discovery.getInstance();
+        discovery.announce(SERVICE, serverURI);
     }
 }

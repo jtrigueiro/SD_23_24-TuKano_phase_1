@@ -107,12 +107,22 @@ public class GrpcUsersClient implements Users {
 
     @Override
     public Result<Void> deleteUserShorts(String userId) {
-        return null;
+        return toJavaResult(() -> {
+            stub.deleteUserShorts(DeleteUserShortsArgs.newBuilder()
+                    .setUserId(userId)
+                    .build());
+            return null;
+        });
     }
 
     @Override
     public Result<Void> deleteBlob(String blobId) {
-        return null;
+        return toJavaResult(() -> {
+            stub.deleteBlob(DeleteBlobArgs.newBuilder()
+                    .setBlobId(blobId)
+                    .build());
+            return null;
+        });
     }
 
     static <T> Result<T> toJavaResult(Supplier<T> func) {
