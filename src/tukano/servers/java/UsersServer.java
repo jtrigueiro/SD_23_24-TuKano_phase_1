@@ -100,7 +100,7 @@ public class UsersServer implements Users {
 		// Check if the password is correct
 		if (!user.getPwd().equals(pwd))
 			return Result.error(Result.ErrorCode.FORBIDDEN);
-
+		
 		// Delete the user's shorts
 		Users client = ClientFactory.getClient(Shorts.NAME);
 		Result<Void> deleteShorts = client.deleteUserShorts(userId);

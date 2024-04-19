@@ -1,8 +1,5 @@
 package tukano.impl.grpc.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import tukano.api.User;
 import tukano.api.Short;
 import tukano.impl.grpc.generated_java.ShortsProtoBuf.GrpcShort;
@@ -12,10 +9,10 @@ public class DataModelAdaptor {
 
 	public static User GrpcUser_to_User(GrpcUser from) {
 		return new User(
-				from.getUserId(),
-				from.getPassword(),
-				from.getEmail(),
-				from.getDisplayName());
+			emptyStringToNull(from.getUserId()), 
+			emptyStringToNull(from.getPassword()), 
+			emptyStringToNull(from.getEmail()), 
+			emptyStringToNull(from.getDisplayName()));
 	}
 
 	public static GrpcUser User_to_GrpcUser(User from) {
@@ -27,13 +24,6 @@ public class DataModelAdaptor {
 				.build();
 	}
 
-	public static List<GrpcUser> UserList_to_GrpcUserList(List<User> from) {
-		List<GrpcUser> grpcUsersList = new ArrayList<>();
-		for (User u : from)
-			grpcUsersList.add(User_to_GrpcUser(u));
-		return grpcUsersList;
-	}
-
 	public static GrpcShort Short_to_GrpcShort(Short from) {
 		return GrpcShort.newBuilder()
 				.setShortId(from.getShortId())
@@ -42,5 +32,9 @@ public class DataModelAdaptor {
 				.setTimestamp(from.getTimestamp())
 				.setTotalLikes(from.getTotalLikes())
 				.build();
+	}
+
+	private static String emptyStringToNull( String s ) {
+		return s == null || s.length() == 0 ? null: s;
 	}
 }
