@@ -6,21 +6,15 @@ option java_outer_classname = "UsersProtoBuf";
 
 service Users {
 
-	rpc createUser( CreateUserArgs ) returns (CreateUserResult) {}
+	rpc createUser( CreateUserArgs ) returns ( CreateUserResult ) {}
 
-	rpc getUser( GetUserArgs) returns (GetUserResult){}
+	rpc getUser( GetUserArgs ) returns ( GetUserResult ){}
 
-	rpc updateUser( UpdateUserArgs) returns (UpdateUserResult){}
+	rpc updateUser( UpdateUserArgs ) returns ( UpdateUserResult ){}
 
-	rpc deleteUser( DeleteUserArgs) returns (DeleteUserResult){}
+	rpc deleteUser( DeleteUserArgs ) returns ( DeleteUserResult ){}
 
-	rpc searchUsers( SearchUserArgs) returns (stream GrpcUser){}
-
-	rpc checkBlobId( CheckBlobIdArgs) returns (CheckBlobIdResult){}
-
-	rpc deleteUserShorts( DeleteUserShortsArgs) returns (DeleteUserShortsResult){}
-
-	rpc deleteBlob( DeleteBlobArgs) returns (DeleteBlobResult){}
+	rpc searchUsers( SearchUserArgs ) returns ( stream GrpcUser ){}
 
 }
 
@@ -71,23 +65,3 @@ message DeleteUserResult {
 message SearchUserArgs {
 	string pattern = 1;
 }
-
-message CheckBlobIdArgs {
-	string blobId = 1;
-}
-
-message CheckBlobIdResult {
-	string blobId = 1;
-}
-
-message DeleteUserShortsArgs {
-	string userId = 1;
-}
-
-message DeleteUserShortsResult {}
-
-message DeleteBlobArgs {
-	string blobId = 1;
-}
-
-message DeleteBlobResult {}

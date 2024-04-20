@@ -10,7 +10,6 @@ import tukano.api.java.Shorts;
 import tukano.api.rest.RestShorts;
 
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.MediaType;
 
 
 public class RestShortsClient extends RestClient implements Shorts {
@@ -31,13 +30,13 @@ public class RestShortsClient extends RestClient implements Shorts {
 				Void.class);
     }
 
-    public Result<Short> clt_getShort(String shortId) {
+    public Result<Void> clt_checkBlobId(String blobId) {
         return super.toJavaResult(
-            target.path(shortId)
-                    .request()
-                    .accept(MediaType.APPLICATION_JSON)
-                    .get(),
-            Short.class);
+                target.path(blobId)
+                        .path(RestShorts.CHECK)
+                        .request()
+                        .get(),
+                Void.class);
     }
     
 
@@ -47,8 +46,8 @@ public class RestShortsClient extends RestClient implements Shorts {
 	}
 
     @Override
-    public Result<Short> getShort(String shortId) {
-        return super.reTry(() -> clt_getShort(shortId));
+    public Result<Void> checkBlobId(String blobId) {
+        return super.reTry(() -> clt_checkBlobId(blobId));
     }
 
     // ----------------- Unimplemented methods -----------------
@@ -63,6 +62,12 @@ public class RestShortsClient extends RestClient implements Shorts {
     public Result<Void> deleteShort(String shortId, String password) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteShort'");
+    }
+
+    @Override
+    public Result<Short> getShort(String shortId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getShort'");
     }
 
     @Override

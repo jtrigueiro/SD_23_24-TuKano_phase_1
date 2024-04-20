@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import tukano.api.Short;
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
@@ -31,7 +30,7 @@ public class BlobServer implements Blobs {
     @Override
     public Result<Void> upload(String blobId, byte[] bytes) {
         Shorts client = ClientFactory.getShortsClient();
-        Result<Short> bCheck = client.getShort(blobId);
+        Result<Void> bCheck = client.checkBlobId(blobId);
 
         // Check if the blobId is verified
         if (!bCheck.isOK())

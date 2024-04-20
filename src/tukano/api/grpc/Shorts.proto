@@ -6,25 +6,27 @@ option java_outer_classname = "ShortsProtoBuf";
 
 service Shorts {
 
-	rpc createShort( CreateShortArgs ) returns (CreateShortResult);
+	rpc createShort( CreateShortArgs ) returns ( CreateShortResult );
 
-	rpc deleteShort( DeleteShortArgs ) returns (DeleteShortResult);
+	rpc deleteShort( DeleteShortArgs ) returns ( DeleteShortResult );
 
-	rpc getShort( GetShortArgs ) returns (GetShortResult);
+	rpc getShort( GetShortArgs ) returns ( GetShortResult );
 
-	rpc getShorts( GetShortsArgs ) returns (GetShortsResult);
+	rpc getShorts( GetShortsArgs ) returns ( GetShortsResult );
 
-	rpc follow( FollowArgs) returns (FollowResult);
+	rpc follow( FollowArgs ) returns ( FollowResult );
 
-	rpc followers( FollowersArgs ) returns (FollowersResult);
+	rpc followers( FollowersArgs ) returns ( FollowersResult );
 
-	rpc like( LikeArgs) returns (LikeResult);
+	rpc like( LikeArgs ) returns ( LikeResult );
 
-	rpc likes( LikesArgs ) returns (LikesResult);
+	rpc likes( LikesArgs ) returns ( LikesResult );
 
-	rpc getFeed( GetFeedArgs) returns (GetFeedResult);
+	rpc getFeed( GetFeedArgs ) returns ( GetFeedResult );
 
-	rpc deleteUserShorts( DeleteUserShortsArgs ) returns (DeleteUserShortsResult);
+	rpc deleteUserShorts( DeleteUserShortsArgs ) returns ( DeleteUserShortsResult );
+
+	rpc checkBlobId( CheckBlobIdArgs ) returns ( CheckBlobIdResult );
 }
 
 message GrpcShort {
@@ -74,8 +76,7 @@ message FollowArgs {
 	string password = 4;
 }
 
-message FollowResult {
-}
+message FollowResult {}
 
 message FollowersArgs {
 	string userId = 1;
@@ -118,3 +119,9 @@ message DeleteUserShortsArgs {
 }
 
 message DeleteUserShortsResult {}
+
+message CheckBlobIdArgs {
+	string blobId = 1;
+}
+
+message CheckBlobIdResult {}

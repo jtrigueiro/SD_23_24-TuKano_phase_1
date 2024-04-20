@@ -12,6 +12,8 @@ import tukano.api.Short;
 import tukano.servers.java.ShortsServer;
 
 import tukano.impl.grpc.generated_java.ShortsGrpc;
+import tukano.impl.grpc.generated_java.ShortsProtoBuf.CheckBlobIdArgs;
+import tukano.impl.grpc.generated_java.ShortsProtoBuf.CheckBlobIdResult;
 import tukano.impl.grpc.generated_java.ShortsProtoBuf.CreateShortArgs;
 import tukano.impl.grpc.generated_java.ShortsProtoBuf.CreateShortResult;
 import tukano.impl.grpc.generated_java.ShortsProtoBuf.FollowArgs;
@@ -149,6 +151,17 @@ public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableSe
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
             responseObserver.onNext(DeleteUserShortsResult.newBuilder().build());
+            responseObserver.onCompleted();
+        }
+    }
+
+    @Override
+    public void checkBlobId(CheckBlobIdArgs request, StreamObserver<CheckBlobIdResult> responseObserver) {
+        Result<Void> res = impl.deleteUserShorts(request.getBlobId());
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(CheckBlobIdResult.newBuilder().build());
             responseObserver.onCompleted();
         }
     }

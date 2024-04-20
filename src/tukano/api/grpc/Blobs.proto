@@ -5,13 +5,13 @@ option java_outer_classname = "BlobsProtoBuf";
 
 service Blobs {
 
-	rpc upload( UploadArgs ) returns (UploadResult) {}
+	rpc upload( UploadArgs ) returns ( UploadResult ) {}
 
-	rpc download( DownloadArgs ) returns (stream DownloadResult) {}
+	rpc download( DownloadArgs ) returns ( stream DownloadResult ) {}
 
-	rpc checkBlobId( CheckBlobIdArgs ) returns (CheckBlobIdResult) {}
+	rpc checkBlobId( CheckBlobIdArgs ) returns ( CheckBlobIdResult ) {}
 
-	rpc delete( DeleteArgs ) returns (DeleteResult) {}
+	rpc delete( DeleteArgs ) returns ( DeleteResult ) {}
 	
 }
 
@@ -30,12 +30,6 @@ message DownloadArgs {
 message DownloadResult {
 	bytes chunk = 1;
 }
-
-message CheckBlobIdArgs {
-	 string blobId = 1;
-}
-
-message CheckBlobIdResult {}
 
 message DeleteArgs {
 	 string blobId = 1;

@@ -9,11 +9,9 @@ import tukano.api.Short;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.impl.grpc.generated_java.ShortsGrpc;
-import tukano.impl.grpc.generated_java.ShortsProtoBuf.GetShortArgs;
 import tukano.impl.grpc.generated_java.ShortsGrpc.ShortsBlockingStub;
+import tukano.impl.grpc.generated_java.ShortsProtoBuf.CheckBlobIdArgs;
 import tukano.impl.grpc.generated_java.ShortsProtoBuf.DeleteUserShortsArgs;
-
-import static tukano.impl.grpc.common.DataModelAdaptor.GrpcShort_to_Short;
 
 public class GrpcShortsClient extends GrpcClient implements Shorts {
 
@@ -34,13 +32,14 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
         });
     }
 
+    
     @Override
-    public Result<Short> getShort(String shortId) {
+    public Result<Void> checkBlobId(String blobId) {
         return toJavaResult(() -> {
-            var res = stub.getShort(GetShortArgs.newBuilder()
-                    .setShortId(shortId)
+            stub.checkBlobId(CheckBlobIdArgs.newBuilder()
+                    .setBlobId(blobId)
                     .build());
-            return GrpcShort_to_Short(res.getValue());
+                return null;
         });
     }
 
@@ -56,6 +55,12 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
     public Result<Void> deleteShort(String shortId, String password) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteShort'");
+    }
+
+    @Override
+    public Result<Short> getShort(String shortId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getShort'");
     }
 
     @Override
@@ -93,6 +98,5 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getFeed'");
     }
-
     
 }

@@ -23,16 +23,7 @@ public class DataModelAdaptor {
 				.setDisplayName(from.getDisplayName())
 				.build();
 	}
-
-	public static Short GrpcShort_to_Short(GrpcShort from) {
-		return new Short(
-			from.getShortId(), 
-			from.getOwnerId(), 
-			from.getBlobUrl(), 
-			from.getTimestamp(), 
-			from.getTotalLikes());
-	}
-
+	
 	public static GrpcShort Short_to_GrpcShort(Short from) {
 		return GrpcShort.newBuilder()
 				.setShortId(from.getShortId())

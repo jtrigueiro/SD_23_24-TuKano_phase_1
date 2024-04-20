@@ -306,6 +306,16 @@ public class ShortsServer implements Shorts {
         return Result.ok();
     }
 
+    public Result<Void> checkBlobId(String blobId) {
+        List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortByShortId, blobId), Short.class);
+
+        // Check if the short with the given blobId exists
+        if (shorts.isEmpty())
+            return Result.error(Result.ErrorCode.NOT_FOUND);
+
+        return Result.ok();
+    }
+
     private void decrementBlobCounter(String URI) {
         for (int i = 0; i < blobServers.length; i++) {
             if (blobServers[i].toString().equals(URI)) {
