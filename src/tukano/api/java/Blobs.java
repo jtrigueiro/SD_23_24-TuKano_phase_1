@@ -54,15 +54,6 @@ public interface Blobs {
 	}
 
 	/**
-	 * Checks if a blobId is valid by querying the Shorts service.
-	 * 
-	 * @param blobId the identifier to check
-	 * @return OK if the blobId is valid;
-	 *         FORBIDDEN if the blobId is not valid
-	 */
-	Result<Void> checkBlobId(String blobId);
-
-	/**
 	 * Deletes a blob resource.
 	 * 
 	 * @param blobId the identifier of the blob to delete

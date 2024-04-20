@@ -72,48 +72,4 @@ public interface Users {
 	 */
 	Result<List<User>> searchUsers(String pattern);
 
-	/**
-	 * Creates a new short
-	 * 
-	 * @param userId   - the userId of the user
-	 * @param password - the password of the user
-	 * @param bytes    - the video as a byte array
-	 * @return OK and the short object, if the userId exists and password matches
-	 *         the existing password;
-	 * 			NOT_FOUND - if no user exists with the provided userId
-	 *         	FORBIDDEN - if the password is incorrect;
-	 *         	BAD_REQUEST - otherwise.
-	 * 
-	 */
-	Result<Void> createShort(String userId, String password, byte[] bytes);
-
-	/**
-	 * Verifies if the blobId is valid
-	 * 
-	 * @param blobId - the blobId of the blob
-	 * @return OK and the blobId, if the blobId is valid
-	 *         NOT_FOUND - if no blob exists with the provided blobId
-	 */
-	Result<String> checkBlobId(String blobId);
-
-
-	/**
-	 * Deletes the users shorts
-	 * 
-	 * @param userId   - the userId of the user
-	 * @param password - the password of the user
-	 * @return (OK, ) if the users shorts were deleted
-	 *         NOT_FOUND if the user does not exists or the blobId of a short owned 
-	 * 		by the user does not match an existing blob
-	 */
-	Result<Void> deleteUserShorts(String userId);
-
-	/**
-	 * Deletes a blob
-	 * 
-	 * @param blobId - the blobId of the blob
-	 * @return (OK, ) if the blob was deleted
-	 *         NOT_FOUND if no blob exists with the provided blobId
-	 */
-	Result<Void> deleteBlob(String blobId);
 }

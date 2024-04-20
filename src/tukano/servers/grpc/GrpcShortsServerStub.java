@@ -83,13 +83,7 @@ public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableSe
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-            GetShortsResult.Builder responseBuilder = GetShortsResult.newBuilder();
-    
-            int i = 0;
-            for (String shortString : res.value())
-                responseBuilder.setShortId(i++, shortString);
-
-            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onNext(GetShortsResult.newBuilder().addAllShortId(res.value()).build());
             responseObserver.onCompleted();
         }
     }
@@ -111,13 +105,7 @@ public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableSe
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-            FollowersResult.Builder responseBuilder = FollowersResult.newBuilder();
-    
-            int i = 0;
-            for (String follower : res.value())
-                responseBuilder.setUserId(i++, follower);
-
-            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onNext(FollowersResult.newBuilder().addAllUserId(res.value()).build());
             responseObserver.onCompleted();
         }
     }
@@ -138,13 +126,7 @@ public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableSe
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-            LikesResult.Builder responseBuilder = LikesResult.newBuilder();
-    
-            int i = 0;
-            for (String liker : res.value())
-                responseBuilder.setUserId(i++, liker);
-
-            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onNext(LikesResult.newBuilder().addAllUserId(res.value()).build());
             responseObserver.onCompleted();
         }
     }
@@ -155,13 +137,7 @@ public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableSe
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-            GetFeedResult.Builder responseBuilder = GetFeedResult.newBuilder();
-    
-            int i = 0;
-            for (String shortString : res.value())
-                responseBuilder.setShortId(i++, shortString);
-
-            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onNext(GetFeedResult.newBuilder().addAllShortId(res.value()).build());
             responseObserver.onCompleted();
         }
     }

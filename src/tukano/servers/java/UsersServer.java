@@ -102,7 +102,7 @@ public class UsersServer implements Users {
 			return Result.error(Result.ErrorCode.FORBIDDEN);
 		
 		// Delete the user's shorts
-		Users client = ClientFactory.getClient(Shorts.NAME);
+		Shorts client = ClientFactory.getShortsClient();
 		Result<Void> deleteShorts = client.deleteUserShorts(userId);
 
 		if (!deleteShorts.isOK())
@@ -124,32 +124,6 @@ public class UsersServer implements Users {
 		}
 
 		return Result.ok(matchingUsers);
-	}
-
-	// ------------------- Unimplemented methods -------------------
-
-	@Override
-	public Result<Void> createShort(String userId, String password, byte[] bytes) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'createShort' in UsersServer.java");
-	}
-
-	@Override
-	public Result<String> checkBlobId(String blobId) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'checkBlobId' in UsersServer.java");
-	}
-
-	@Override
-	public Result<Void> deleteUserShorts(String userId) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'deleteUserShorts' in UsersServer.java");
-	}
-
-	@Override
-	public Result<Void> deleteBlob(String blobId) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'deleteBlob' in UsersServer.java");
 	}
 
 }

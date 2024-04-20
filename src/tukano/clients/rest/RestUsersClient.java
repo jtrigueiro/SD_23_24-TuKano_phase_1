@@ -10,26 +10,20 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.GenericType;
 
 import tukano.api.User;
-import tukano.api.Short;
 import tukano.api.java.Users;
 import tukano.api.java.Result;
-import tukano.api.rest.RestBlobs;
 import tukano.api.rest.RestUsers;
-import tukano.api.rest.RestShorts;
 
 public class RestUsersClient extends RestClient implements Users {
 
-	final URI serverURI;
-	private WebTarget target;
+	private final WebTarget target;
 
 	public RestUsersClient(URI serverURI) {
 		super();
-		this.serverURI = serverURI;
+		target = client.target(serverURI).path(RestUsers.PATH);
 	}
 
 	private Result<String> clt_createUser(User user) {
-		target = client.target(serverURI).path(RestUsers.PATH);
-
 		return super.toJavaResult(
 				target.request()
 						.accept(MediaType.APPLICATION_JSON)
@@ -38,8 +32,6 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<User> clt_getUser(String userId, String pwd) {
-		target = client.target(serverURI).path(RestUsers.PATH);
-
 		return super.toJavaResult(
 				target.path(userId)
 						.queryParam(RestUsers.PWD, pwd).request()
@@ -49,8 +41,6 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<User> clt_updateUser(String userId, String password, User user) {
-		target = client.target(serverURI).path(RestUsers.PATH);
-
 		return super.toJavaResult(
 				target.path(userId)
 						.queryParam(RestUsers.PWD, password)
@@ -60,8 +50,6 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<User> clt_deleteUser(String userId, String password) {
-		target = client.target(serverURI).path(RestUsers.PATH);
-		
 		return super.toJavaResult(
 				target.path(userId)
 						.queryParam(RestUsers.PWD, password)
@@ -71,70 +59,12 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<List<User>> clt_searchUsers(String pattern) {
-		target = client.target(serverURI).path(RestUsers.PATH);
-
 		return super.toJavaResult(
 				target.queryParam(RestUsers.QUERY, pattern)
 						.request(MediaType.APPLICATION_JSON)
 						.get(),
 				new GenericType<List<User>>() {
 				});
-	}
-
-	private Result<Void> clt_createShort(String userId, String password, byte[] bytes) {
-		target = client.target(serverURI).path(RestShorts.PATH);
-
-		Result<Short> result = super.toJavaResult(
-				target.path(userId)
-						.queryParam(RestUsers.PWD, password)
-						.request().post(null),
-				Short.class);
-
-		if (!result.isOK())
-			return Result.error(result.error());
-
-		Short s = result.value();
-		URI blobURI = URI.create(s.getBlobUrl());
-		WebTarget blob = client.target(blobURI);
-
-		Result<Void> upload = super.toJavaResult(blob
-				.path(s.getShortId())
-				.request().accept(MediaType.APPLICATION_OCTET_STREAM)
-				.post(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM)), Void.class);
-
-		return upload.isOK() ? Result.ok() : Result.error(upload.error());
-	}
-
-	private Result<String> clt_checkBlobId(String blobId) {
-		target = client.target(serverURI).path(RestShorts.PATH);
-
-		return super.toJavaResult(
-				target.path(blobId)
-						.request()
-						.accept(MediaType.APPLICATION_JSON)
-						.get(),
-				String.class);
-	}
-
-	private Result<Void> clt_deleteUserShorts(String userId) {
-		target = client.target(serverURI).path(RestShorts.PATH);
-
-		return super.toJavaResult(
-				target.path(userId)
-						.path(RestShorts.DELETES)
-						.request()
-						.delete(),
-				Void.class);
-	}
-
-	private Result<Void> clt_deleteBlob(String blobId) {
-		target = client.target(serverURI).path(RestBlobs.PATH);
-
-		return super.toJavaResult(
-				target.path(blobId)
-						.request()
-						.delete(),
-				Void.class);
 	}
 
 	@Override
@@ -160,26 +90,6 @@ public class RestUsersClient extends RestClient implements Users {
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
 		return super.reTry(() -> clt_searchUsers(pattern));
-	}
-
-	@Override
-	public Result<Void> createShort(String userId, String password, byte[] bytes) {
-		return super.reTry(() -> clt_createShort(userId, password, bytes));
-	}
-
-	@Override
-	public Result<String> checkBlobId(String blobId) {
-		return super.reTry(() -> clt_checkBlobId(blobId));
-	}
-
-	@Override
-	public Result<Void> deleteUserShorts(String userId) {
-		return super.reTry(() -> clt_deleteUserShorts(userId));
-	}
-
-	@Override
-	public Result<Void> deleteBlob(String blobId) {
-		return super.reTry(() -> clt_deleteBlob(blobId));
 	}
 
 }

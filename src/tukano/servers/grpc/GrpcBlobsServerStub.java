@@ -17,8 +17,6 @@ import tukano.impl.grpc.generated_java.BlobsProtoBuf.DownloadArgs;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.DownloadResult;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadArgs;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadResult;
-import tukano.impl.grpc.generated_java.BlobsProtoBuf.CheckBlobIdArgs;
-import tukano.impl.grpc.generated_java.BlobsProtoBuf.CheckBlobIdResult;
 
 public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableService {
 
@@ -47,17 +45,6 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {  
             responseObserver.onNext(DownloadResult.newBuilder().setChunk(ByteString.copyFrom(res.value())).build());
-            responseObserver.onCompleted();
-        }
-    }
-
-    @Override
-    public void checkBlobId(CheckBlobIdArgs request, StreamObserver<CheckBlobIdResult> responseObserver) {
-        var res = impl.checkBlobId(request.getBlobId());
-        if (!res.isOK())
-            responseObserver.onError(errorCodeToStatus(res.error()));
-        else {
-            responseObserver.onNext(CheckBlobIdResult.newBuilder().build());
             responseObserver.onCompleted();
         }
     }

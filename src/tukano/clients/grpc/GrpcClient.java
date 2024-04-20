@@ -2,12 +2,7 @@ package tukano.clients.grpc;
 
 import java.util.function.Supplier;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.ProcessingException;
-import jakarta.ws.rs.client.ClientBuilder;
 
 import tukano.utils.Sleep;
 import tukano.api.java.Result;
@@ -23,20 +18,8 @@ public class GrpcClient {
     
     protected static final int MAX_RETRIES = 3;
 	protected static final int RETRY_SLEEP = 1000;
-	protected static final int READ_TIMEOUT = 10000;
-	protected static final int CONNECT_TIMEOUT = 10000;
 
-	protected Client client;
-	protected ClientConfig config;
-
-	public GrpcClient() {
-		this.config = new ClientConfig();
-
-		config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
-		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
-
-		this.client = ClientBuilder.newClient(config);
-	}
+	public GrpcClient() {}
 
     protected <T> Result<T> reTry(Supplier<Result<T>> func) {
 		for (int i = 0; i < MAX_RETRIES; i++)
@@ -62,17 +45,6 @@ public class GrpcClient {
         }
     }
 
-    static Result<Void> toJavaResult(Runnable func) {
-        try {
-            func.run();
-            return ok(null);
-        } catch (StatusRuntimeException sre) {
-            var code = sre.getStatus().getCode();
-            if (code == Code.UNAVAILABLE || code == Code.DEADLINE_EXCEEDED)
-                throw sre;
-            return error(statusToErrorCode(sre.getStatus()));
-        }
-    }
 
     static ErrorCode statusToErrorCode(Status status) {
         return switch (status.getCode()) {

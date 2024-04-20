@@ -11,6 +11,7 @@ import tukano.api.Likes;
 import tukano.api.Short;
 import tukano.api.Follows;
 import tukano.api.java.Users;
+import tukano.api.java.Blobs;
 import tukano.api.rest.RestBlobs;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
@@ -44,7 +45,7 @@ public class ShortsServer implements Shorts {
 
     @Override
     public Result<Short> createShort(String userId, String password) {
-        Users client = ClientFactory.getClient(Users.NAME);
+        Users client = ClientFactory.getUsersClient();
         Result<User> uCheck = client.getUser(userId, password);
 
         // Check if the user exists and if the password is correct
@@ -67,17 +68,17 @@ public class ShortsServer implements Shorts {
 
         Short s = shorts.get(0);
 
-        Users client = ClientFactory.getClient(Users.NAME);
+        Users client = ClientFactory.getUsersClient();
         Result<User> uCheck = client.getUser(s.getOwnerId(), password);
 
         // Check if the user exists and if the password is correct
         if (!uCheck.isOK())
             return Result.error(uCheck.error());
 
-        String shortenURL = s.getBlobUrl().split(RestBlobs.PATH)[0];
+        String shortenURL = getShortenBlobURL(s);
 
-        Users client2 = ClientFactory.getClientURI(URI.create(shortenURL));
-        Result<Void> deleteBlob = client2.deleteBlob(s.getShortId());
+        Blobs client2 = ClientFactory.getBlobsClient(URI.create(shortenURL));
+        Result<Void> deleteBlob = client2.delete(s.getShortId());
 
         // Check if the blob was deleted
         if (!deleteBlob.isOK() && !deleteBlob.error().equals(Result.ErrorCode.NOT_FOUND))
@@ -107,7 +108,7 @@ public class ShortsServer implements Shorts {
 
     @Override
     public Result<List<String>> getShorts(String userId) {
-        Users client = ClientFactory.getClient(Users.NAME);
+        Users client = ClientFactory.getUsersClient();
         Result<User> uCheck = client.getUser(userId, "WrOnGpAsSwOrD");
 
         // Check if the user exists
@@ -121,7 +122,7 @@ public class ShortsServer implements Shorts {
 
     @Override
     public Result<Void> follow(String userId1, String userId2, boolean isFollowing, String password) {
-        Users client = ClientFactory.getClient(Users.NAME);
+        Users client = ClientFactory.getUsersClient();
         Result<User> u1Check = client.getUser(userId1, password);
 
         // Check if the first user exists and if the password is correct
@@ -154,7 +155,7 @@ public class ShortsServer implements Shorts {
 
     @Override
     public Result<List<String>> followers(String userId, String password) {
-        Users client = ClientFactory.getClient(Users.NAME);
+        Users client = ClientFactory.getUsersClient();
         Result<User> uCheck = client.getUser(userId, password);
 
         // Check if the user exists and if the password is correct
@@ -167,7 +168,7 @@ public class ShortsServer implements Shorts {
 
     @Override
     public Result<Void> like(String shortId, String userId, boolean isLiked, String password) {
-        Users client = ClientFactory.getClient(Users.NAME);
+        Users client = ClientFactory.getUsersClient();
         Result<User> uCheck = client.getUser(userId, password);
 
         // Check if the user exists and if the password is correct
@@ -211,7 +212,7 @@ public class ShortsServer implements Shorts {
 
         Short s = shorts.get(0);
 
-        Users client = ClientFactory.getClient(Users.NAME);
+        Users client = ClientFactory.getUsersClient();
         Result<User> uCheck = client.getUser(s.getOwnerId(), password);
 
         // Check if the password is correct
@@ -224,7 +225,7 @@ public class ShortsServer implements Shorts {
 
     @Override
     public Result<List<String>> getFeed(String userId, String password) {
-        Users client = ClientFactory.getClient(Users.NAME);
+        Users client = ClientFactory.getUsersClient();
         Result<User> uCheck = client.getUser(userId, password);
 
         // Check if the user exists and if the password is correct
@@ -264,10 +265,10 @@ public class ShortsServer implements Shorts {
 
         // Deleting shorts and its likes and blobs
         for (Short s : shorts) {
-            String shortenURL = s.getBlobUrl().split(RestBlobs.PATH)[0];
+            String shortenURL = getShortenBlobURL(s);
 
-            Users client = ClientFactory.getClientURI(URI.create(shortenURL));
-            Result<Void> delete = client.deleteBlob(s.getShortId());
+            Blobs client = ClientFactory.getBlobsClient(URI.create(shortenURL));
+            Result<Void> delete = client.delete(s.getShortId());
 
             // Check if the blob was deleted
             if (!delete.isOK())
@@ -326,6 +327,10 @@ public class ShortsServer implements Shorts {
 
         blobsShortsCounterMem[minimumPos]++;
         return blobServers[minimumPos].toString();
+    }
+
+    private String getShortenBlobURL(Short s) {
+            return s.getBlobUrl().split(RestBlobs.PATH)[0];
     }
 
 }
