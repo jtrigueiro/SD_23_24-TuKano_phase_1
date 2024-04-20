@@ -9,8 +9,6 @@ service Blobs {
 
 	rpc download( DownloadArgs ) returns ( stream DownloadResult ) {}
 
-	rpc checkBlobId( CheckBlobIdArgs ) returns ( CheckBlobIdResult ) {}
-
 	rpc delete( DeleteArgs ) returns ( DeleteResult ) {}
 	
 }
